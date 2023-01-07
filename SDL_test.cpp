@@ -1,4 +1,4 @@
-#include "SDL_basics.hpp"
+#include "SDL_Screen.hpp"
 
 using namespace std;
 
@@ -8,12 +8,8 @@ int width, height;
 
 int main(){
 
-    SDL_Window *w;   // open a window command
-    SDL_Renderer *r; // render creation
-    std::cout << "SDL window and renderer OK"<<std::endl;
-
-    openSDL(WIDTH, HEIGHT, 0, "SDL c++", &w, &r);
-    SDL_SetWindowResizable(w, SDL_TRUE);
+    SDL_Screen s;
+    s.OpenSDL();
     std::cout << "SDL openning OK" << std::endl;
 
 
@@ -22,9 +18,9 @@ int main(){
     while(program_launched){
         SDL_Event evt; // ask events
 
-        SDL_Delay(100);
+        s.freeze(100);
 
-        SDL_RenderPresent(r); // refresh the render
+        s.refresh(); // refresh the render
 
         while (SDL_PollEvent(&evt))
         { // reads all the events (mouse moving, key pressed...)        //possible to wait for an event with SDL_WaitEvent
@@ -32,8 +28,8 @@ int main(){
             {
             case SDL_WINDOWEVENT:
                 if (evt.window.event == SDL_WINDOWEVENT_RESIZED) {
-                    SDL_GetWindowSize(w, &width, &height);
-                    printf("MESSAGE:Resizing window... width = %d   height = %d\n", width, height);
+                    //SDL_GetWindowSize(w, &width, &height);
+                    //printf("MESSAGE:Resizing window... width = %d   height = %d\n", width, height);
                 }
                 break;
             case SDL_QUIT:
@@ -60,7 +56,7 @@ int main(){
 
 
 
-    closeSDL(&w, &r);
+    s.CloseSDL();
     std::cout << "Closed SDL successfully" << std::endl;
     return 0;
 }
