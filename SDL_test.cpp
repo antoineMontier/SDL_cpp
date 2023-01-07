@@ -41,7 +41,17 @@ void closeSDL(SDL_Window **w, SDL_Renderer **r)
 
 int main(){
 
-    std::cout << "hey"<<std::endl;
+    SDL_Window *w;   // open a window command
+    SDL_Renderer *r; // render creation
+    std::cout << "SDL window and renderer OK"<<std::endl;
+
+    openSDL(WIDTH, HEIGHT, 0, "SDL-Lab", &w, &r);
+
+    std::cout << "SDL openning OK" << std::endl;
+
+    closeSDL(&w, &r);
+
+    std::cout << "Closed SDL successfully" << std::endl;
 
     return 0;
 }
