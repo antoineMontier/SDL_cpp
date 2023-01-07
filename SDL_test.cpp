@@ -3,6 +3,7 @@
 using namespace std;
 
 
+int width, height;
 
 
 int main(){
@@ -14,6 +15,7 @@ int main(){
     openSDL(WIDTH, HEIGHT, 0, "SDL c++", &w, &r);
     SDL_SetWindowResizable(w, SDL_TRUE);
     std::cout << "SDL openning OK" << std::endl;
+
 
     bool program_launched = true;
 
@@ -30,8 +32,8 @@ int main(){
             {
             case SDL_WINDOWEVENT:
                 if (evt.window.event == SDL_WINDOWEVENT_RESIZED) {
-                    printf("MESSAGE:Resizing window...\n");
-                    //resizeWindow(evt.window.data1, evt. window.data2);
+                    SDL_GetWindowSize(w, &width, &height);
+                    printf("MESSAGE:Resizing window... width = %d   height = %d\n", width, height);
                 }
                 break;
             case SDL_QUIT:
