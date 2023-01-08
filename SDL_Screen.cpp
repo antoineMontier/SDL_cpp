@@ -36,9 +36,10 @@ bool SDL_Screen::OpenSDL(){
     // at this point, the SDL is well initialised, we can afford it because of the if
 
     w = SDL_CreateWindow(title, width, height, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
-    r = SDL_CreateRenderer(w, -1, 1);
-
     SDL_SetWindowResizable(w, SDL_TRUE);
+
+    r = SDL_CreateRenderer(w, -1, SDL_RENDERER_TARGETTEXTURE);
+    SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);//to make alpha transparent
 
     if (TTF_Init() != 0){
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Initialization SDL failed", NULL);
@@ -64,4 +65,30 @@ bool SDL_Screen::refresh(){
 bool SDL_Screen::freeze(unsigned int ms){
     SDL_Delay(ms);
     return true;
+}
+
+void SDL_Screen::SDL_ExitWithError(const char *string)
+{
+    SDL_Log("Error : %s > %s\n", string, SDL_GetError());
+    SDL_Quit();
+    exit(EXIT_FAILURE);
+}
+
+void SDL_Screen::point(double x, double y){
+    if (SDL_RenderDrawPoint(r, x, y) != 0)
+        SDL_ExitWithError("failed to draw point");
+}
+
+void SDL_Screen::point(double x, double y, double thickness){
+    //int thick =  static_cast<int>(round(thickness));
+    for(double i = x - thickness/2; i < x + thickness/2 ; i++)
+        for(double j = y - thickness/2; j < y + thickness/2 ; j++)
+            if (SDL_RenderDrawPoint(r, i, j) != 0)
+                SDL_ExitWithError("failed to draw point");
+    
+}
+
+void SDL_Screen::setColor(int red, int green, int blue, int alpha){
+    if (SDL_SetRenderDrawColor(r, red, green, blue, alpha) != 0)
+        SDL_ExitWithError("failed to set color");
 }

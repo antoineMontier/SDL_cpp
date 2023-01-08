@@ -2,6 +2,7 @@
 #define SDL_SCREEN_HPP
 
 #include "SDL_basics.hpp"
+#include <cmath>
 
 
 
@@ -14,6 +15,9 @@ class SDL_Screen{
         SDL_Window *w;
         SDL_Renderer *r;
         const char * title;
+        SDL_Event e;
+
+        void SDL_ExitWithError(const char *string);
 
     public:
 
@@ -32,6 +36,12 @@ class SDL_Screen{
         bool freeze(unsigned int ms);
 
         bool CloseSDL();
+
+        void point(double x, double y);
+
+        void point(double x, double y, double thickness);
+
+        void setColor(int red, int green, int blue, int alpha);
 };
 
 #endif

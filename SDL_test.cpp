@@ -10,7 +10,6 @@ int main(){
 
     SDL_Screen s;
     s.OpenSDL();
-    std::cout << "SDL openning OK" << std::endl;
 
 
     bool program_launched = true;
@@ -18,8 +17,17 @@ int main(){
     while(program_launched){
         SDL_Event evt; // ask events
 
-        s.freeze(100);
+        s.setColor(255, 0, 0, 255);
+        s.point(50, 50);
+        s.setColor(255, 0, 255, 255);
+        s.point(300, 100, 30);
+        s.setColor(0, 255, 0, 255);
+        s.point(300, 120, 30);
+        s.setColor(0, 255, 0, 100);
+        s.point(300, 80, 30);
 
+
+        s.freeze(100);
         s.refresh(); // refresh the render
 
         while (SDL_PollEvent(&evt))
@@ -33,7 +41,7 @@ int main(){
                 }
                 break;
             case SDL_QUIT:
-                program_launched = SDL_FALSE; // quit the program if the user closes the window
+                program_launched = false; // quit the program if the user closes the window
                 break;
 
             case SDL_KEYDOWN: // SDL_KEYDOWN : hold a key            SDL_KEYUP : release a key
@@ -41,7 +49,7 @@ int main(){
                 { // returns the key ('0' ; 'e' ; 'SPACE'...)
 
                 case SDLK_ESCAPE:
-                    program_launched = SDL_FALSE; // escape the program by pressing esc
+                    program_launched = false; // escape the program by pressing esc
                     break;
 
                 default:
