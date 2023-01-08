@@ -12,12 +12,11 @@
 class SDL_Screen{
     
     private:
-        int width;
-        int height;
+        int _width;
+        int _height;
         SDL_Window *w;
         SDL_Renderer *r;
         const char * title;
-        SDL_Event e;
 
         void SDL_ExitWithError(const char *string);
 
@@ -48,6 +47,11 @@ class SDL_Screen{
         void bg(int red, int green, int blue);
 
         void updateSize();
+
+        void rect(int x, int y, int size);
+        void rect(int x, int y, int width, int height);
+        void rect(int x, int y, int width, int height, int rounding);
+        void rect(int x, int y, int width, int height, int rounding_top_left, int rounding_top_right, int rounding_bottom_right, int rounding_bottom_left);
 
 };
 

@@ -17,15 +17,16 @@ int main(){
     while(program_launched){
         SDL_Event evt; // ask events
 
+        s.bg(100);
         s.setColor(255, 0, 0, 255);
         s.point(50, 50);
         s.setColor(255, 0, 255, 255);
         s.point(300, 100, 30);
         s.setColor(0, 255, 0, 255);
         s.point(300, 220, 30);
-        s.bg(100);
         s.setColor(0, 255, 0, 255);
         s.point(300, 180, 30);
+        s.rect(400, 350, 150, 60);
 
 
         s.freeze(100);

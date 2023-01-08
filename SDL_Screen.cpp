@@ -3,26 +3,26 @@
 using namespace std;
 
 SDL_Screen::SDL_Screen(){
-    width = 600;
-    height = 480;
+    _width = 600;
+    _height = 480;
     title = "SDL_Screen";
 }
 
 SDL_Screen::SDL_Screen(double window_width, double window_height){
-    width = window_width;
-    height = window_height;
+    _width = window_width;
+    _height = window_height;
     title = "SDL_Screen";
 }
 
 SDL_Screen::SDL_Screen(const char* window_title){
-    width = 600;
-    height = 480;
+    _width = 600;
+    _height = 480;
     title = window_title;
 }
 
 SDL_Screen::SDL_Screen(double window_width, double window_height, const char* window_title){
-    width = window_width;
-    height = window_height;
+    _width = window_width;
+    _height = window_height;
     title = window_title;
 }
 
@@ -38,7 +38,7 @@ bool SDL_Screen::OpenSDL(){
     if (SDL_GetDesktopDisplayMode(0, &displayMode) != 0)//know actual screen size
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Initialization SDL failed", NULL);*/
 
-    w = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    w = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, _width, _height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     SDL_SetWindowResizable(w, SDL_TRUE);
 
     r = SDL_CreateRenderer(w, -1, SDL_RENDERER_TARGETTEXTURE);
@@ -107,8 +107,8 @@ void SDL_Screen::setColor(int grey){
 }
 
 void SDL_Screen::bg(){
-    for(int x = -1 ; x < width + 1; x++)
-        for(int y = -1 ; y < height + 1; y++)
+    for(int x = -1 ; x < _width + 1; x++)
+        for(int y = -1 ; y < _height + 1; y++)
             point(x, y);
 }
 
@@ -118,8 +118,8 @@ void SDL_Screen::bg(int grey){
     if(SDL_GetRenderDrawColor(r, &cr, &cg, &cb, &ca) != 0)
         SDL_ExitWithError("failed to save color");
     setColor(grey);
-    for(int x = -1 ; x < width + 1; x++)
-        for(int y = -1 ; y < height + 1; y++)
+    for(int x = -1 ; x < _width + 1; x++)
+        for(int y = -1 ; y < _height + 1; y++)
             point(x, y);
     //reset the color as before
     setColor(cr, cg, cb, ca);
@@ -131,8 +131,8 @@ void SDL_Screen::bg(int red, int green, int blue){
     if(SDL_GetRenderDrawColor(r, &cr, &cg, &cb, &ca) != 0)
         SDL_ExitWithError("failed to save color");
     setColor(red, green, blue);
-    for(int x = -1 ; x < width + 1; x++)
-        for(int y = -1 ; y < height + 1; y++)
+    for(int x = -1 ; x < _width + 1; x++)
+        for(int y = -1 ; y < _height + 1; y++)
             point(x, y);
     //reset the color as before
     setColor(cr, cg, cb, ca);
@@ -142,6 +142,23 @@ void SDL_Screen::bg(int red, int green, int blue){
 void SDL_Screen::updateSize(){
     int _wi, _he;
     SDL_GetWindowSize(w, &_wi, &_he);
-    width = _wi;
-    height = _he;
+    _width = _wi;
+    _height = _he;
+}
+
+
+void SDL_Screen::rect(int x, int y, int size){
+    for(int i = x ; i < x + size; i++)
+        for(int j = y ; j < y + size; j++){
+            if (SDL_RenderDrawPoint(r, i, j) != 0)
+                SDL_ExitWithError("failed to draw point in the rect()");
+        }
+}
+
+void SDL_Screen::rect(int x, int y, int width, int height){
+    for(int i = x ; i < x + width; i++)
+        for(int j = y ; j < y + height; j++){
+            if (SDL_RenderDrawPoint(r, i, j) != 0)
+                SDL_ExitWithError("failed to draw point in the rect()");
+        }
 }
