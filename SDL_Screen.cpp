@@ -221,3 +221,69 @@ void SDL_Screen::filledCircle(int x, int y, int width, int height){
         }
     }
 }
+
+void SDL_Screen::emptyCircle(int x, int y, int width, int height){
+    int xc = 0;
+    int yc = height;
+    long a2 = width * width;
+    long b2 = height * height;
+    long t = -a2 * yc;
+    long dxt = 2*b2 * xc;
+    long dyt = -2*a2 *yc;
+
+    while (yc >= 0 && xc <= width){
+
+        SDL_RenderDrawPoint(r, x + xc, y + yc);
+        SDL_RenderDrawPoint(r, x - xc, y + yc);
+        SDL_RenderDrawPoint(r, x + xc, y - yc);
+        SDL_RenderDrawPoint(r, x - xc, y - yc);
+
+        if (t + b2 * xc <= -(a2/4+width % 2 + b2) || t + a2 * yc <= -(b2/4+height % 2)){
+            xc++;
+            dxt+= 2*b2;
+            t += dxt;
+        }
+        else if (t - a2 * yc > -(b2/4+height % 2 + a2)){
+            yc--;
+            dyt += 2*a2;
+            t += dyt;
+        }
+        else{
+            xc++;
+            dxt += 2*b2;
+            t += dxt;
+            yc--;
+            dyt += 2*a2;
+            t += dyt;
+        }
+    }
+}
+
+
+void SDL_Screen::emptyCircle(int x, int y, int width, int height, double thickness){
+    // calculate the points on the circumference of the ellipse
+    std::vector<SDL_Point> points;
+    points.clear();
+    for (int i = 0; i < 360; i++)
+    {
+        double angle = i * M_PI / 180.0;
+        int x_offset = static_cast<int>(width * cos(angle));
+        int y_offset = static_cast<int>(height * sin(angle));
+        SDL_Point point = { x + x_offset, y + y_offset };
+        points.push_back(point);
+    }
+
+    // draw the points with the desired thickness
+    for (int i = 0; i < thickness; i++)
+    {
+        // calculate the start and end indices for the subset of points
+        int start_index = i * points.size() / thickness;
+        int end_index = (i + 1) * points.size() / thickness;
+
+        // draw the subset of points
+        for (int j = start_index; j < end_index; j++)
+        {
+            SDL_RenderDrawPoint(r, points[j].x, points[j].y);
+        }
+    }
+}
