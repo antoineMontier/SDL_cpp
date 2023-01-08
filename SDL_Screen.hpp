@@ -5,7 +5,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <cmath>
-
+#include <vector>
 
 
 
@@ -62,6 +62,7 @@ class SDL_Screen{
 
         void emptyCircle(int x, int y, int radius);
         void emptyCircle(int x, int y, int radius, double thickness);
+        void emptyCircle(int x, int y, int width, int height);
         void emptyCircle(int x, int y, int width, int height, double thickness);
 
 };

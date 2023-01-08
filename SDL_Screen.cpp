@@ -175,14 +175,49 @@ void SDL_Screen::filledCircle(int x, int y, int radius){
 
 void SDL_Screen::emptyCircle(int x, int y, int radius){
     for(int i = x - radius - 1; i < x + radius + 1; i++)
-    for(int j = y - radius - 1; j < y + radius + 1; j++)
-        if(distance(i, j, x, y) < radius + 1 && distance(i, j, x, y) > radius - 1)
-            SDL_RenderDrawPoint(r, i, j);
+        for(int j = y - radius - 1; j < y + radius + 1; j++)
+            if(distance(i, j, x, y) < radius + 1 && distance(i, j, x, y) > radius - 1)
+                SDL_RenderDrawPoint(r, i, j);
 }
 
 void SDL_Screen::emptyCircle(int x, int y, int radius, double thickness){
     for(int i = x - radius - thickness; i < x + radius + thickness; i++)
-    for(int j = y - radius - thickness; j < y + radius + thickness; j++)
-        if(distance(i, j, x, y) < radius + thickness && distance(i, j, x, y) > radius - thickness)
-            SDL_RenderDrawPoint(r, i, j);
+        for(int j = y - radius - thickness; j < y + radius + thickness; j++)
+            if(distance(i, j, x, y) < radius + thickness && distance(i, j, x, y) > radius - thickness)
+                SDL_RenderDrawPoint(r, i, j);
+}
+
+void SDL_Screen::filledCircle(int x, int y, int width, int height){
+    int xc = 0;
+    int yc = height;
+    long a2 = width * width;
+    long b2 = height * height;
+    long t = -a2 * yc;
+    long dxt = 2*b2 * xc;
+    long dyt = -2*a2 *yc;
+
+    while (yc >= 0 && xc <= width)
+    {
+        SDL_RenderDrawLine(r, x - xc, y - yc, x + xc, y - yc);
+        SDL_RenderDrawLine(r, x - xc, y + yc, x + xc, y + yc);
+        
+        if (t + b2 * xc <= -(a2/4+width % 2 + b2) || t + a2 * yc <= -(b2/4+height % 2)){
+            xc++;
+            dxt+= 2*b2;
+            t += dxt;
+        }
+        else if (t - a2 * yc > -(b2/4+height % 2 + a2)){
+            yc--;
+            dyt += 2*a2;
+            t += dyt;
+        }
+        else{
+            xc++;
+            dxt += 2*b2;
+            t += dxt;
+            yc--;
+            dyt += 2*a2;
+            t += dyt;
+        }
+    }
 }
