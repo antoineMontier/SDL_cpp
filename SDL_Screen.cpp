@@ -77,6 +77,9 @@ void SDL_Screen::SDL_ExitWithError(const char *string)
     exit(EXIT_FAILURE);
 }
 
+double SDL_Screen::distance(double x1, double y1, double x2, double y2){return sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));}
+
+
 void SDL_Screen::point(double x, double y){
     if (SDL_RenderDrawPoint(r, x, y) != 0)
         SDL_ExitWithError("failed to draw point");
@@ -146,19 +149,26 @@ void SDL_Screen::updateSize(){
     _height = _he;
 }
 
-
-void SDL_Screen::rect(int x, int y, int size){
-    for(int i = x ; i < x + size; i++)
-        for(int j = y ; j < y + size; j++){
-            if (SDL_RenderDrawPoint(r, i, j) != 0)
-                SDL_ExitWithError("failed to draw point in the rect()");
-        }
+void SDL_Screen::line(int x1, int y1, int x2, int y2){
+    if(SDL_RenderDrawLine(r, x1, y1, x2, y2) != 0)
+        SDL_ExitWithError("failed to draw a line");
 }
 
-void SDL_Screen::rect(int x, int y, int width, int height){
+void SDL_Screen::filledRect(int x, int y, int size){
+    for(int i = x ; i < x + size; i++)
+        for(int j = y ; j < y + size; j++)
+            SDL_RenderDrawPoint(r, i, j);
+}
+
+void SDL_Screen::filledRect(int x, int y, int width, int height){
     for(int i = x ; i < x + width; i++)
-        for(int j = y ; j < y + height; j++){
-            if (SDL_RenderDrawPoint(r, i, j) != 0)
-                SDL_ExitWithError("failed to draw point in the rect()");
-        }
+        for(int j = y ; j < y + height; j++)
+            SDL_RenderDrawPoint(r, i, j);
+}
+
+void SDL_Screen::filledCircle(int x, int y, int radius){
+    for(int i = x - radius; i < x + radius; i++)
+        for(int j = y - radius; j < y + radius; j++)
+            if(distance(i, j, x, y) < radius)
+                SDL_RenderDrawPoint(r, i, j);
 }

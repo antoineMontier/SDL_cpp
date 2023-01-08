@@ -26,7 +26,8 @@ int main(){
         s.point(300, 220, 30);
         s.setColor(0, 255, 0, 255);
         s.point(300, 180, 30);
-        s.rect(400, 350, 150, 60);
+        s.filledRect(400, 350, 150, 60);
+        s.filledCircle(150, 300, 150);
 
 
         s.freeze(100);

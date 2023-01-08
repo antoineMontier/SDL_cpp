@@ -20,6 +20,8 @@ class SDL_Screen{
 
         void SDL_ExitWithError(const char *string);
 
+        double distance(double x1, double y1, double x2, double y2);
+
     public:
 
         SDL_Screen();
@@ -48,10 +50,18 @@ class SDL_Screen{
 
         void updateSize();
 
-        void rect(int x, int y, int size);
-        void rect(int x, int y, int width, int height);
-        void rect(int x, int y, int width, int height, int rounding);
-        void rect(int x, int y, int width, int height, int rounding_top_left, int rounding_top_right, int rounding_bottom_right, int rounding_bottom_left);
+        void line(int x1, int y1, int x2, int y2);
+
+        void filledRect(int x, int y, int size);
+        void filledRect(int x, int y, int width, int height);
+        void filledRect(int x, int y, int width, int height, int rounding);//todo
+        void filledRect(int x, int y, int width, int height, int rounding_top_left, int rounding_top_right, int rounding_bottom_right, int rounding_bottom_left);//todo
+
+        void filledCircle(int x, int y, int radius);
+        void filledCircle(int x, int y, int width, int height);
+
+        void emptyCircle(int x, int y, int radius);
+        void emptyCircle(int x, int y, int width, int height);
 
 };
 
