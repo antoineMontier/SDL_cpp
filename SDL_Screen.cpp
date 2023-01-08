@@ -33,20 +33,23 @@ bool SDL_Screen::OpenSDL(){
         exit(1);
         return false; // error
     }   
-    // at this point, the SDL is well initialised, we can afford it because of the if
 
-    w = SDL_CreateWindow(title, width, height, WIDTH, HEIGHT, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+    /*SDL_DisplayMode displayMode;
+    if (SDL_GetDesktopDisplayMode(0, &displayMode) != 0)//know actual screen size
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Initialization SDL failed", NULL);*/
+
+    w = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
     SDL_SetWindowResizable(w, SDL_TRUE);
 
     r = SDL_CreateRenderer(w, -1, SDL_RENDERER_TARGETTEXTURE);
-    SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);//to make alpha transparent
+    SDL_SetRenderDrawBlendMode(r, SDL_BLENDMODE_BLEND);//make alpha transparent
 
     if (TTF_Init() != 0){
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Initialization SDL failed", NULL);
         exit(1);
         return false; // error
     } 
-    return true;//everything is succesful
+    return true;//sdl opening is succesful
 }
 
 bool SDL_Screen::CloseSDL(){
@@ -133,4 +136,12 @@ void SDL_Screen::bg(int red, int green, int blue){
             point(x, y);
     //reset the color as before
     setColor(cr, cg, cb, ca);
+}
+
+
+void SDL_Screen::updateSize(){
+    int _wi, _he;
+    SDL_GetWindowSize(w, &_wi, &_he);
+    width = _wi;
+    height = _he;
 }

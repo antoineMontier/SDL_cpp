@@ -1,7 +1,9 @@
 #ifndef SDL_SCREEN_HPP
 #define SDL_SCREEN_HPP
 
-#include "SDL_basics.hpp"
+#include <iostream>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <cmath>
 
 
@@ -10,8 +12,8 @@
 class SDL_Screen{
     
     private:
-        double height;
-        double width;
+        int width;
+        int height;
         SDL_Window *w;
         SDL_Renderer *r;
         const char * title;
@@ -44,7 +46,9 @@ class SDL_Screen{
         void bg();
         void bg(int grey);
         void bg(int red, int green, int blue);
-        
+
+        void updateSize();
+
 };
 
 #endif

@@ -3,13 +3,13 @@
 using namespace std;
 
 
-int width, height;
 
 
 int main(){
 
     SDL_Screen s;
     s.OpenSDL();
+    
 
 
     bool program_launched = true;
@@ -30,15 +30,14 @@ int main(){
 
         s.freeze(100);
         s.refresh(); // refresh the render
-
+        
         while (SDL_PollEvent(&evt))
         { // reads all the events (mouse moving, key pressed...)        //possible to wait for an event with SDL_WaitEvent
             switch (evt.type)
             {
             case SDL_WINDOWEVENT:
                 if (evt.window.event == SDL_WINDOWEVENT_RESIZED) {
-                    //SDL_GetWindowSize(w, &width, &height);
-                    //printf("MESSAGE:Resizing window... width = %d   height = %d\n", width, height);
+                    s.updateSize();
                 }
                 break;
             case SDL_QUIT:
@@ -60,6 +59,8 @@ int main(){
                 break;
             }
         }
+
+
 
     }
 
