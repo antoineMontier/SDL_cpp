@@ -22,9 +22,10 @@ int main(){
         s.setColor(255, 0, 255, 255);
         s.point(300, 100, 30);
         s.setColor(0, 255, 0, 255);
-        s.point(300, 120, 30);
-        s.setColor(0, 255, 0, 100);
-        s.point(300, 80, 30);
+        s.point(300, 220, 30);
+        s.bg(100);
+        s.setColor(0, 255, 0, 255);
+        s.point(300, 180, 30);
 
 
         s.freeze(100);

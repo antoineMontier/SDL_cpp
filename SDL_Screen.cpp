@@ -92,3 +92,45 @@ void SDL_Screen::setColor(int red, int green, int blue, int alpha){
     if (SDL_SetRenderDrawColor(r, red, green, blue, alpha) != 0)
         SDL_ExitWithError("failed to set color");
 }
+
+void SDL_Screen::setColor(int red, int green, int blue){
+    if (SDL_SetRenderDrawColor(r, red, green, blue, 255) != 0)
+        SDL_ExitWithError("failed to set color");
+}
+
+void SDL_Screen::setColor(int grey){
+    if (SDL_SetRenderDrawColor(r, grey, grey, grey, 255) != 0)
+        SDL_ExitWithError("failed to set color");
+}
+
+void SDL_Screen::bg(){
+    for(int x = -1 ; x < width + 1; x++)
+        for(int y = -1 ; y < height + 1; y++)
+            point(x, y);
+}
+
+void SDL_Screen::bg(int grey){
+    //save the renderer color
+    Uint8 cr, cg, cb, ca;
+    if(SDL_GetRenderDrawColor(r, &cr, &cg, &cb, &ca) != 0)
+        SDL_ExitWithError("failed to save color");
+    setColor(grey);
+    for(int x = -1 ; x < width + 1; x++)
+        for(int y = -1 ; y < height + 1; y++)
+            point(x, y);
+    //reset the color as before
+    setColor(cr, cg, cb, ca);
+}
+
+void SDL_Screen::bg(int red, int green, int blue){
+    //save the renderer color
+    Uint8 cr, cg, cb, ca;
+    if(SDL_GetRenderDrawColor(r, &cr, &cg, &cb, &ca) != 0)
+        SDL_ExitWithError("failed to save color");
+    setColor(red, green, blue);
+    for(int x = -1 ; x < width + 1; x++)
+        for(int y = -1 ; y < height + 1; y++)
+            point(x, y);
+    //reset the color as before
+    setColor(cr, cg, cb, ca);
+}
