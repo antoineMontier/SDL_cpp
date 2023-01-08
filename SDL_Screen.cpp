@@ -172,3 +172,17 @@ void SDL_Screen::filledCircle(int x, int y, int radius){
             if(distance(i, j, x, y) < radius)
                 SDL_RenderDrawPoint(r, i, j);
 }
+
+void SDL_Screen::emptyCircle(int x, int y, int radius){
+    for(int i = x - radius - 1; i < x + radius + 1; i++)
+    for(int j = y - radius - 1; j < y + radius + 1; j++)
+        if(distance(i, j, x, y) < radius + 1 && distance(i, j, x, y) > radius - 1)
+            SDL_RenderDrawPoint(r, i, j);
+}
+
+void SDL_Screen::emptyCircle(int x, int y, int radius, double thickness){
+    for(int i = x - radius - thickness; i < x + radius + thickness; i++)
+    for(int j = y - radius - thickness; j < y + radius + thickness; j++)
+        if(distance(i, j, x, y) < radius + thickness && distance(i, j, x, y) > radius - thickness)
+            SDL_RenderDrawPoint(r, i, j);
+}

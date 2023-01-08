@@ -61,7 +61,8 @@ class SDL_Screen{
         void filledCircle(int x, int y, int width, int height);
 
         void emptyCircle(int x, int y, int radius);
-        void emptyCircle(int x, int y, int width, int height);
+        void emptyCircle(int x, int y, int radius, double thickness);
+        void emptyCircle(int x, int y, int width, int height, double thickness);
 
 };
 

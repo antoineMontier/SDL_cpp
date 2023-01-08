@@ -28,6 +28,8 @@ int main(){
         s.point(300, 180, 30);
         s.filledRect(400, 350, 150, 60);
         s.filledCircle(150, 300, 150);
+        s.setColor(0, 255, 255, 255);
+        s.emptyCircle(250, 250, 150, 20);
 
 
         s.freeze(100);
