@@ -15,9 +15,9 @@ int main(){
     bool program_launched = true;
     int x;
     long ti, ty;
+    s.setFPS(120);
     while(program_launched){
         ty = ti = SDL_GetTicks();
-        s.startLoop(SDL_GetTicks());
         SDL_Event evt; // ask events
         
 
@@ -62,9 +62,8 @@ int main(){
             }
         }
 
-        s.endLoop(SDL_GetTicks());
+        s.refresh(); // refresh the render and add the fps desired delay
         std::cout << "\tadded ticks =  " << (SDL_GetTicks() - ty) <<"\ttotal ticks = " << (SDL_GetTicks() - ti) << std::endl;
-        s.refresh(); // refresh the render
 
     }
 

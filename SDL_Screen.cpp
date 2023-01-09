@@ -88,7 +88,10 @@ bool SDL_Screen::CloseSDL(){
 }
 
 bool SDL_Screen::refresh(){
-    SDL_RenderPresent(r);
+    if(SDL_GetTicks() - _ms < _fps)
+        SDL_Delay(1000.0/_fps - (SDL_GetTicks() - _ms));//add ticks to get a the desired fps
+    SDL_RenderPresent(r);//display
+    _ms = SDL_GetTicks();//get the ticks for another turn
     return true;
 }
 
@@ -406,14 +409,4 @@ void SDL_Screen::emptyRect(int x, int y, int width, int height, int rounding){
                 SDL_RenderDrawPoint(r, i, j);
 }
 
-bool SDL_Screen::startLoop(long milliseconds){
-    _ms = milliseconds;
-    return true;
-}
-
-bool SDL_Screen::endLoop(long milliseconds){
-    if(milliseconds - _ms >= _fps)
-        return false;
-    freeze(1000.0/_fps - (milliseconds - _ms));
-    return true;
-}
+void SDL_Screen::setFPS(double fps){_fps = fps;}
