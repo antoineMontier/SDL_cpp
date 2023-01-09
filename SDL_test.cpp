@@ -19,10 +19,7 @@ int main(){
 
         s.bg(100);
         s.setColor(255, 0, 0, 255);
-        s.filledCircle(200, 300, 50, 100);
-        s.emptyCircle(400, 300, 50, 100);
-        s.setColor(255, 0, 255, 255);
-        s.emptyCircle(300, 100, 100, 50, 100);
+        s.filledCircle(s.getW()/2.0, s.getH()/2.0, s.getW()/3.0, s.getH()/3.0);
 
         s.freeze(100);
         s.refresh(); // refresh the render

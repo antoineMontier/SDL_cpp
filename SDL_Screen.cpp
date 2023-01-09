@@ -259,31 +259,6 @@ void SDL_Screen::emptyCircle(int x, int y, int width, int height){
     }
 }
 
+int SDL_Screen::getW(){return _width;}
 
-void SDL_Screen::emptyCircle(int x, int y, int width, int height, double thickness){
-    // calculate the points on the circumference of the ellipse
-    std::vector<SDL_Point> points;
-    points.clear();
-    for (int i = 0; i < 360; i++)
-    {
-        double angle = i * M_PI / 180.0;
-        int x_offset = static_cast<int>(width * cos(angle));
-        int y_offset = static_cast<int>(height * sin(angle));
-        SDL_Point point = { x + x_offset, y + y_offset };
-        points.push_back(point);
-    }
-
-    // draw the points with the desired thickness
-    for (int i = 0; i < thickness; i++)
-    {
-        // calculate the start and end indices for the subset of points
-        int start_index = i * points.size() / thickness;
-        int end_index = (i + 1) * points.size() / thickness;
-
-        // draw the subset of points
-        for (int j = start_index; j < end_index; j++)
-        {
-            SDL_RenderDrawPoint(r, points[j].x, points[j].y);
-        }
-    }
-}
+int SDL_Screen::getH(){return _height;}

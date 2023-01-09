@@ -31,6 +31,9 @@ class SDL_Screen{
 
         bool OpenSDL();
 
+        int getW();
+        int getH();
+
         bool refresh();
 
         bool freeze(unsigned int ms);
@@ -63,7 +66,7 @@ class SDL_Screen{
         void emptyCircle(int x, int y, int radius);
         void emptyCircle(int x, int y, int radius, double thickness);
         void emptyCircle(int x, int y, int width, int height);
-        void emptyCircle(int x, int y, int width, int height, double thickness);
+        //void emptyCircle(int x, int y, int width, int height, double thickness);
 
 };
 
