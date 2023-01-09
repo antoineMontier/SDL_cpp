@@ -19,7 +19,9 @@ int main(){
 
         s.bg(100);
         s.setColor(255, 0, 0, 255);
-        s.filledCircle(s.getW()/2.0, s.getH()/2.0, s.getW()/3.0, s.getH()/3.0);
+        s.emptyTriangle(200, 200, 250, 300, 400, 200);
+        s.setColor(0, 255, 0, 255);
+        s.filledTriangle(200, 400, 250, 500, 400, 300);
 
         s.freeze(100);
         s.refresh(); // refresh the render

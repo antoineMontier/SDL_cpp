@@ -262,3 +262,36 @@ void SDL_Screen::emptyCircle(int x, int y, int width, int height){
 int SDL_Screen::getW(){return _width;}
 
 int SDL_Screen::getH(){return _height;}
+
+void SDL_Screen::filledTriangle(int x1, int y1, int x2, int y2, int x3, int y3){
+    double s_x = fmin(x1, fmin(x2, x3));
+    double s_y = fmin(y1, fmin(y2, y3));
+    double f_x = fmax(x1, fmax(x2, x3));
+    double f_y = fmax(y1, fmax(y2, y3));
+    for (double a = s_x; a <= f_x; a++)
+        for (double b = s_y; b <= f_y; b++)
+            if (inTheTriangle(x1, y1, x2, y2, x3, y3, a, b))
+                SDL_RenderDrawPoint(r, a, b);
+}
+
+void SDL_Screen::emptyTriangle(int x1, int y1, int x2, int y2, int x3, int y3){
+    SDL_RenderDrawLine(r, x1, y1, x2, y2);
+    SDL_RenderDrawLine(r, x3, y3, x2, y2);
+    SDL_RenderDrawLine(r, x1, y1, x3, y3);
+}
+
+bool SDL_Screen::inTheTriangle(double x1, double y1, double x2, double y2, double x3, double y3, double a, double b){
+    int sign1 = -1, sign2 = -1, sign3 = -1;
+    if (((x2 - x1) * (b - y1) - (y2 - y1) * (a - x1)) >= 0)
+        sign1 = 1;
+
+    if (((x3 - x2) * (b - y2) - (y3 - y2) * (a - x2)) >= 0)
+        sign2 = 1;
+
+    if (((x1 - x3) * (b - y3) - (a - x3) * (y1 - y3)) >= 0)
+        sign3 = 1;
+
+    if (sign1 == sign2 && sign2 == sign3)
+        return true;
+    return false;
+}
