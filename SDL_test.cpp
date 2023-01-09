@@ -13,18 +13,26 @@ int main(){
 
 
     bool program_launched = true;
-
+    int x;
+    long ti, ty;
     while(program_launched){
+        ty = ti = SDL_GetTicks();
+        s.startLoop(SDL_GetTicks());
         SDL_Event evt; // ask events
-        s.bg(100);
-        s.setColor(255, 0, 0, 255);
-        s.emptyRect(200, 200, 300, 150);
-        s.setColor(0, 255, 0, 255);
-        s.emptyRect(200, 200, 300, 150, 50);
-
-        s.freeze(100);
-        s.refresh(); // refresh the render
         
+
+        s.setColor(0, 0, 0, 255);
+        
+        s.bg();
+        
+        s.setColor(255, 0, 0, 255);
+        s.filledCircle(x, s.getH() - x, 20);
+        x = (x + 2) % s.getH();
+
+        ty = SDL_GetTicks();
+
+        
+        std::cout << "calc ticks = " << (SDL_GetTicks() - ty);
         while (SDL_PollEvent(&evt))
         { // reads all the events (mouse moving, key pressed...)        //possible to wait for an event with SDL_WaitEvent
             switch (evt.type)
@@ -54,7 +62,9 @@ int main(){
             }
         }
 
-
+        s.endLoop(SDL_GetTicks());
+        std::cout << "\tadded ticks =  " << (SDL_GetTicks() - ty) <<"\ttotal ticks = " << (SDL_GetTicks() - ti) << std::endl;
+        s.refresh(); // refresh the render
 
     }
 

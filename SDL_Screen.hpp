@@ -14,9 +14,11 @@ class SDL_Screen{
     private:
         int _width;
         int _height;
+        long _ms;
         SDL_Window *w;
         SDL_Renderer *r;
         const char * title;
+        double _fps;
 
         void SDL_ExitWithError(const char *string);
 
@@ -28,13 +30,16 @@ class SDL_Screen{
 
         SDL_Screen();
         SDL_Screen(double window_width, double window_height);
+        SDL_Screen(double window_width, double window_height, double fps);
         SDL_Screen(const char* window_title);
         SDL_Screen(double window_width, double window_height, const char* window_title);
+        SDL_Screen(double window_width, double window_height, const char* window_title, double fps);
 
         bool OpenSDL();
 
         int getW();
         int getH();
+        double getFPS();
 
         bool refresh();
 
@@ -59,12 +64,12 @@ class SDL_Screen{
 
         void emptyRect(int x, int y, int size);
         void emptyRect(int x, int y, int width, int height);
-        void emptyRect(int x, int y, int width, int height, int rounding);//todo
+        void emptyRect(int x, int y, int width, int height, int rounding);
         void emptyRect(int x, int y, int width, int height, int rounding_top_left, int rounding_top_right, int rounding_bottom_right, int rounding_bottom_left);//todo
         
         void filledRect(int x, int y, int size);
         void filledRect(int x, int y, int width, int height);
-        void filledRect(int x, int y, int width, int height, int rounding);//todo
+        void filledRect(int x, int y, int width, int height, int rounding);
         void filledRect(int x, int y, int width, int height, int rounding_top_left, int rounding_top_right, int rounding_bottom_right, int rounding_bottom_left);//todo
 
         void filledCircle(int x, int y, int radius);
@@ -83,6 +88,9 @@ class SDL_Screen{
 
         void emptyPolygon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 
+        bool startLoop(long milliseconds);
+
+        bool endLoop(long milliseconds);
 
 };
 

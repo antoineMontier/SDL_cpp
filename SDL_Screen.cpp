@@ -6,25 +6,52 @@ SDL_Screen::SDL_Screen(){
     _width = 600;
     _height = 480;
     title = "SDL_Screen";
+    _fps = 30.0;
+    _ms = 0;
 }
 
 SDL_Screen::SDL_Screen(double window_width, double window_height){
     _width = window_width;
     _height = window_height;
     title = "SDL_Screen";
+    _fps = 30.0;
+    _ms = 0;
 }
 
 SDL_Screen::SDL_Screen(const char* window_title){
     _width = 600;
     _height = 480;
     title = window_title;
+    _fps = 30.0;
+    _ms = 0;
 }
 
 SDL_Screen::SDL_Screen(double window_width, double window_height, const char* window_title){
     _width = window_width;
     _height = window_height;
     title = window_title;
+    _fps = 30.0;
+    _ms = 0;
 }
+
+SDL_Screen::SDL_Screen(double window_width, double window_height, double fps){
+    _width = window_width;
+    _height = window_height;
+    title = "SDL_Screen";
+    _fps = fps;
+    _ms = 0;
+}
+
+SDL_Screen::SDL_Screen(double window_width, double window_height, const char* window_title, double fps){
+    _width = window_width;
+    _height = window_height;
+    title = window_title;
+    _fps = fps;
+    _ms = 0;
+}
+
+double SDL_Screen::getFPS(){return _fps;}
+
 
 bool SDL_Screen::OpenSDL(){
 
@@ -110,9 +137,7 @@ void SDL_Screen::setColor(int grey){
 }
 
 void SDL_Screen::bg(){
-    for(int x = -1 ; x < _width + 1; x++)
-        for(int y = -1 ; y < _height + 1; y++)
-            point(x, y);
+    SDL_RenderClear(r);
 }
 
 void SDL_Screen::bg(int grey){
@@ -121,9 +146,7 @@ void SDL_Screen::bg(int grey){
     if(SDL_GetRenderDrawColor(r, &cr, &cg, &cb, &ca) != 0)
         SDL_ExitWithError("failed to save color");
     setColor(grey);
-    for(int x = -1 ; x < _width + 1; x++)
-        for(int y = -1 ; y < _height + 1; y++)
-            point(x, y);
+    SDL_RenderClear(r);
     //reset the color as before
     setColor(cr, cg, cb, ca);
 }
@@ -134,9 +157,7 @@ void SDL_Screen::bg(int red, int green, int blue){
     if(SDL_GetRenderDrawColor(r, &cr, &cg, &cb, &ca) != 0)
         SDL_ExitWithError("failed to save color");
     setColor(red, green, blue);
-    for(int x = -1 ; x < _width + 1; x++)
-        for(int y = -1 ; y < _height + 1; y++)
-            point(x, y);
+    SDL_RenderClear(r);
     //reset the color as before
     setColor(cr, cg, cb, ca);
 }
@@ -353,35 +374,46 @@ void SDL_Screen::emptyRect(int x, int y, int width, int height, int rounding){
     if(rounding > fmin(width, height)/2.0)
         rounding = fmin(width, height)/2.0;
     //draw the lines without corners
-    double thick = 0.7;
-    SDL_RenderDrawLine(r, x + rounding, y, x + width - rounding, y);//top
-    SDL_RenderDrawLine(r, x + rounding, y + height, x + width - rounding, y + height);//bottom
-    SDL_RenderDrawLine(r, x, y + rounding, x, y + height - rounding);//left
-    SDL_RenderDrawLine(r, x + width, y + rounding, x + width, y + height - rounding);//right
+    double thick = 0.6;
+    SDL_RenderDrawLine(r, x + rounding - 1, y, x + width - rounding + 1, y);//top
+    SDL_RenderDrawLine(r, x + rounding - 1, y + height, x + width - rounding + 1, y + height);//bottom
+    SDL_RenderDrawLine(r, x, y + rounding - 1, x, y + height - rounding + 1);//left
+    SDL_RenderDrawLine(r, x + width, y + rounding - 1, x + width, y + height - rounding + 1);//right
     //now draw the four corners
-    //==== top left
-    for(int i = x ; i < x + rounding; i++)
-        for(int j = y ; j < y + rounding; j++)
+
+    //==== top left ====
+    for(int i = x - thick ; i < x + rounding + thick; i++)
+        for(int j = y - thick; j < y + rounding + thick; j++)
             if(distance(x + rounding, y + rounding, i, j) <= rounding + thick && distance(x + rounding, y + rounding, i, j) >= rounding - thick)
                 SDL_RenderDrawPoint(r, i, j);
     
-    //==== top right
-    for(int i = x + width - rounding; i < x + width; i++)
-        for(int j = y; j < y + rounding; j++)
+    //==== top right ====
+    for(int i = x + width - rounding - thick; i < x + width + thick; i++)
+        for(int j = y - thick ; j < y + rounding + thick ; j++)
             if(distance(x + width - rounding, y + rounding, i, j) >= rounding - thick && distance(x + width - rounding, y + rounding, i, j) <= rounding + thick) 
                 SDL_RenderDrawPoint(r, i, j);
 
-    //==== bottom left 
-    for(int i = x ; i < x + rounding ; i++)
-        for(int j = y + height - rounding ; j < y + height ; j++)
+    //==== bottom left ====
+    for(int i = x - thick; i < x + rounding + thick; i++)
+        for(int j = y + height - rounding - thick; j < y + height + thick; j++)
             if(distance(x + rounding, y + height - rounding, i, j) >= rounding - thick && distance(x + rounding, y + height - rounding, i, j) <= rounding + thick) 
                 SDL_RenderDrawPoint(r, i, j);
 
-    //==== bottom right
-    for(int i = x + width - rounding ; i < x + width ; i++)
-        for(int j = y + height - rounding ; j < y + height ; j++)
+    //==== bottom right ====
+    for(int i = x + width - rounding - thick; i < x + width + thick; i++)
+        for(int j = y + height - rounding - thick; j < y + height + thick; j++)
             if(distance(x + width - rounding, y + height - rounding, i, j) <= rounding + thick && distance(x + width - rounding, y + height - rounding, i, j) >= rounding - thick)
                 SDL_RenderDrawPoint(r, i, j);
+}
 
+bool SDL_Screen::startLoop(long milliseconds){
+    _ms = milliseconds;
+    return true;
+}
 
+bool SDL_Screen::endLoop(long milliseconds){
+    if(milliseconds - _ms >= _fps)
+        return false;
+    freeze(1000.0/_fps - (milliseconds - _ms));
+    return true;
 }
