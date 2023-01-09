@@ -19,9 +19,9 @@ int main(){
 
         s.bg(100);
         s.setColor(255, 0, 0, 255);
-        s.emptyRect(200, 200, 250, 100);
+        s.emptyRect(200, 200, 300, 150);
         s.setColor(0, 255, 0, 255);
-        s.filledPolygon(200, 400, 250, 500, 400, 300, 420, 250);
+        s.filledRect(200, 200, 300, 150, 20);
 
         s.freeze(100);
         s.refresh(); // refresh the render

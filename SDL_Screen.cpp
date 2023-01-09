@@ -323,3 +323,24 @@ void SDL_Screen::emptyRect(int x, int y, int width, int height){
     SDL_RenderDrawLine(r, x+width, y+height, x+width, y);
     SDL_RenderDrawLine(r, x+width, y+height, x, y+height);
 }
+
+void SDL_Screen::filledRect(int x, int y, int width, int height, int rounding){
+    //first let's fix the rounding if it's bellow 0 or greater than the half of the smallest side of the rectangle
+    if(rounding < 0){
+        filledRect(x, y, width, height);
+        return;
+    }
+    if(rounding > fmin(width, height)/2.0)
+        rounding = fmin(width, height)/2.0;
+    //let's draw the core rectangles
+    filledRect(x, y + rounding, width, height-2*rounding);
+    filledRect(x + rounding, y, width-2*rounding, height);
+
+    //draw the 4 corners
+
+    filledCircle(x +  rounding, y + rounding, rounding);//top left
+    filledCircle(x + width - rounding, y + rounding, rounding);//top right
+    filledCircle(x + rounding, y + height - rounding, rounding);//bottom left
+    filledCircle(x + width - rounding, y + height - rounding, rounding);//bottom right
+
+}
