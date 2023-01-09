@@ -295,3 +295,17 @@ bool SDL_Screen::inTheTriangle(double x1, double y1, double x2, double y2, doubl
         return true;
     return false;
 }
+
+void SDL_Screen::filledPolygon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4){
+    filledTriangle(x1, y1, x2, y2, x3, y3);
+    filledTriangle(x2, y2, x3, y3, x4, y4);
+    filledTriangle(x3, y3, x4, y4, x1, y1);
+    filledTriangle(x4, y4, x1, y1, x2, y2);
+}
+
+void SDL_Screen::emptyPolygon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4){
+    SDL_RenderDrawLine(r, x1, y1, x2, y2);
+    SDL_RenderDrawLine(r, x2, y2, x3, y3);
+    SDL_RenderDrawLine(r, x3, y3, x4, y4);
+    SDL_RenderDrawLine(r, x4, y4, x1, y1);
+}

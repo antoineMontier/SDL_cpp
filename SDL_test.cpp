@@ -19,9 +19,9 @@ int main(){
 
         s.bg(100);
         s.setColor(255, 0, 0, 255);
-        s.emptyTriangle(200, 200, 250, 300, 400, 200);
+        s.emptyPolygon(200, 200, 250, 300, 400, 200, 150, 150);
         s.setColor(0, 255, 0, 255);
-        s.filledTriangle(200, 400, 250, 500, 400, 300);
+        s.filledPolygon(200, 400, 250, 500, 400, 300, 420, 250);
 
         s.freeze(100);
         s.refresh(); // refresh the render
