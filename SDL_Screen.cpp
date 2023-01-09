@@ -326,7 +326,7 @@ void SDL_Screen::emptyRect(int x, int y, int width, int height){
 
 void SDL_Screen::filledRect(int x, int y, int width, int height, int rounding){
     //first let's fix the rounding if it's bellow 0 or greater than the half of the smallest side of the rectangle
-    if(rounding < 0){
+    if(rounding <= 0){
         filledRect(x, y, width, height);
         return;
     }
@@ -342,5 +342,46 @@ void SDL_Screen::filledRect(int x, int y, int width, int height, int rounding){
     filledCircle(x + width - rounding, y + rounding, rounding);//top right
     filledCircle(x + rounding, y + height - rounding, rounding);//bottom left
     filledCircle(x + width - rounding, y + height - rounding, rounding);//bottom right
+}
+
+void SDL_Screen::emptyRect(int x, int y, int width, int height, int rounding){
+    //first let's fix the rounding if it's bellow 0 or greater than the half of the smallest side of the rectangle
+    if(rounding <= 0){
+        emptyRect(x, y, width, height);
+        return;
+    }
+    if(rounding > fmin(width, height)/2.0)
+        rounding = fmin(width, height)/2.0;
+    //draw the lines without corners
+    double thick = 0.7;
+    SDL_RenderDrawLine(r, x + rounding, y, x + width - rounding, y);//top
+    SDL_RenderDrawLine(r, x + rounding, y + height, x + width - rounding, y + height);//bottom
+    SDL_RenderDrawLine(r, x, y + rounding, x, y + height - rounding);//left
+    SDL_RenderDrawLine(r, x + width, y + rounding, x + width, y + height - rounding);//right
+    //now draw the four corners
+    //==== top left
+    for(int i = x ; i < x + rounding; i++)
+        for(int j = y ; j < y + rounding; j++)
+            if(distance(x + rounding, y + rounding, i, j) <= rounding + thick && distance(x + rounding, y + rounding, i, j) >= rounding - thick)
+                SDL_RenderDrawPoint(r, i, j);
+    
+    //==== top right
+    for(int i = x + width - rounding; i < x + width; i++)
+        for(int j = y; j < y + rounding; j++)
+            if(distance(x + width - rounding, y + rounding, i, j) >= rounding - thick && distance(x + width - rounding, y + rounding, i, j) <= rounding + thick) 
+                SDL_RenderDrawPoint(r, i, j);
+
+    //==== bottom left 
+    for(int i = x ; i < x + rounding ; i++)
+        for(int j = y + height - rounding ; j < y + height ; j++)
+            if(distance(x + rounding, y + height - rounding, i, j) >= rounding - thick && distance(x + rounding, y + height - rounding, i, j) <= rounding + thick) 
+                SDL_RenderDrawPoint(r, i, j);
+
+    //==== bottom right
+    for(int i = x + width - rounding ; i < x + width ; i++)
+        for(int j = y + height - rounding ; j < y + height ; j++)
+            if(distance(x + width - rounding, y + height - rounding, i, j) <= rounding + thick && distance(x + width - rounding, y + height - rounding, i, j) >= rounding - thick)
+                SDL_RenderDrawPoint(r, i, j);
+
 
 }

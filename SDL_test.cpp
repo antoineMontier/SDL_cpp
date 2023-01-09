@@ -16,12 +16,11 @@ int main(){
 
     while(program_launched){
         SDL_Event evt; // ask events
-
         s.bg(100);
         s.setColor(255, 0, 0, 255);
         s.emptyRect(200, 200, 300, 150);
         s.setColor(0, 255, 0, 255);
-        s.filledRect(200, 200, 300, 150, 20);
+        s.emptyRect(200, 200, 300, 150, 50);
 
         s.freeze(100);
         s.refresh(); // refresh the render
