@@ -42,6 +42,7 @@ class SDL_Screen{
         double getFPS();
 
         bool refresh();
+        bool refreshAndDetails();
 
         bool freeze(unsigned int ms);
 

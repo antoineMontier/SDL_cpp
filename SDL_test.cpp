@@ -14,10 +14,10 @@ int main(){
 
     bool program_launched = true;
     int x;
-    long ti, ty;
+
     s.setFPS(120);
+
     while(program_launched){
-        ty = ti = SDL_GetTicks();
         SDL_Event evt; // ask events
         
 
@@ -29,10 +29,8 @@ int main(){
         s.filledCircle(x, s.getH() - x, 20);
         x = (x + 2) % s.getH();
 
-        ty = SDL_GetTicks();
 
         
-        std::cout << "calc ticks = " << (SDL_GetTicks() - ty);
         while (SDL_PollEvent(&evt))
         { // reads all the events (mouse moving, key pressed...)        //possible to wait for an event with SDL_WaitEvent
             switch (evt.type)
@@ -62,9 +60,7 @@ int main(){
             }
         }
 
-        s.refresh(); // refresh the render and add the fps desired delay
-        std::cout << "\tadded ticks =  " << (SDL_GetTicks() - ty) <<"\ttotal ticks = " << (SDL_GetTicks() - ti) << std::endl;
-
+        s.refreshAndDetails(); // refresh the render and add the fps desired delay
     }
 
 

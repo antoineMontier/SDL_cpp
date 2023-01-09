@@ -95,6 +95,18 @@ bool SDL_Screen::refresh(){
     return true;
 }
 
+bool SDL_Screen::refreshAndDetails(){
+    std::cout << "calc ticks : " << (SDL_GetTicks() - _ms);
+    long freezed = SDL_GetTicks();
+    if(SDL_GetTicks() - _ms < _fps)
+        SDL_Delay(1000.0/_fps - (SDL_GetTicks() - _ms));//add ticks to get a the desired fps
+    std::cout << "\tfreeze ticks : " << (SDL_GetTicks() - freezed);
+    SDL_RenderPresent(r);//display
+    std::cout << "\ttotal : " << (SDL_GetTicks() - _ms) << std::endl; 
+    _ms = SDL_GetTicks();//get the ticks for another turn
+    return true;
+}
+
 bool SDL_Screen::freeze(unsigned int ms){
     SDL_Delay(ms);
     return true;
