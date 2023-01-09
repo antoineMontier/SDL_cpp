@@ -309,3 +309,17 @@ void SDL_Screen::emptyPolygon(int x1, int y1, int x2, int y2, int x3, int y3, in
     SDL_RenderDrawLine(r, x3, y3, x4, y4);
     SDL_RenderDrawLine(r, x4, y4, x1, y1);
 }
+
+void SDL_Screen::emptyRect(int x, int y, int size){
+    SDL_RenderDrawLine(r, x, y, x + size, y);
+    SDL_RenderDrawLine(r, x, y, x, y + size);
+    SDL_RenderDrawLine(r, x + size, y + size, x, y + size);
+    SDL_RenderDrawLine(r, x + size, y + size, x + size, y);
+}
+
+void SDL_Screen::emptyRect(int x, int y, int width, int height){
+    SDL_RenderDrawLine(r, x, y, x+width, y);
+    SDL_RenderDrawLine(r, x, y, x, y+height);
+    SDL_RenderDrawLine(r, x+width, y+height, x+width, y);
+    SDL_RenderDrawLine(r, x+width, y+height, x, y+height);
+}

@@ -57,6 +57,11 @@ class SDL_Screen{
 
         void line(int x1, int y1, int x2, int y2);
 
+        void emptyRect(int x, int y, int size);
+        void emptyRect(int x, int y, int width, int height);
+        void emptyRect(int x, int y, int width, int height, int rounding);//todo
+        void emptyRect(int x, int y, int width, int height, int rounding_top_left, int rounding_top_right, int rounding_bottom_right, int rounding_bottom_left);//todo
+        
         void filledRect(int x, int y, int size);
         void filledRect(int x, int y, int width, int height);
         void filledRect(int x, int y, int width, int height, int rounding);//todo
