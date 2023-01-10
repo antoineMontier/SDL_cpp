@@ -7,18 +7,18 @@ int main(){
     TTF_Font * f;
     s.setFont(&f, "Roboto-Medium.ttf", 30);
 
-    
     while(s.isRunning()){
-
+        
 
         s.setColor(0, 0, 0, 255);
         s.bg();
 
         s.setColor(255, 0, 0, 255);
-        
-        s.filledRect(150, 150, 800, 500);
 
-        s.refreshAndDetailsAndEvents(); // refresh the render and add the fps desired delay
+        s.emptyCircle(500, 500, 400, 800);
+        s.filledRect(150, 150, 800, 600, 150);
+
+        s.refreshAndDetailsAndEvents();
     }
     
     TTF_CloseFont(f);

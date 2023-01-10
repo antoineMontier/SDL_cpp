@@ -98,22 +98,41 @@ class SDL_Screen{
 
         void line(int x1, int y1, int x2, int y2);
 
-        void emptyRect(int x, int y, int size);
-        void emptyRect(int x, int y, int width, int height);
+        /// @brief creates an empty square
+        /// @param x the upper left x-coordinate
+        /// @param y the upper left y-coordinate
+        /// @param size the widht and height of the square
+        void emptyRect(int x, int y, int size);//optimized
+
+        /// @brief creates an empty rectangle
+        /// @param x the upper left x-coordinate
+        /// @param y the upper left y-coordinate
+        /// @param width the width of the rectangle
+        /// @param height the height of the rectangle
+        void emptyRect(int x, int y, int width, int height);//optimized
         void emptyRect(int x, int y, int width, int height, int rounding);
-        void emptyRect(int x, int y, int width, int height, int rounding_top_left, int rounding_top_right, int rounding_bottom_right, int rounding_bottom_left);//todo
+        //void emptyRect(int x, int y, int width, int height, int rounding_top_left, int rounding_top_right, int rounding_bottom_right, int rounding_bottom_left);//todo
         
-        void filledRect(int x, int y, int size);
-        void filledRect(int x, int y, int width, int height);
-        void filledRect(int x, int y, int width, int height, int rounding);
-        void filledRect(int x, int y, int width, int height, int rounding_top_left, int rounding_top_right, int rounding_bottom_right, int rounding_bottom_left);//todo
+        /// @brief creates a filled square
+        /// @param x the upper left x-coordinate
+        /// @param y the upper left y-coordinate
+        /// @param size the witdh and height of the square
+        void filledRect(int x, int y, int size);//optimized
 
-        void filledCircle(int x, int y, int radius);
-        void filledCircle(int x, int y, int width, int height);
+        /// @brief creates a filled rectangle
+        /// @param x the upper left x-coordinate
+        /// @param y the upper left y-coordinate
+        /// @param width the width of the rectangle
+        /// @param height the height of the rectangle
+        void filledRect(int x, int y, int width, int height);//optimized
+        void filledRect(int x, int y, int width, int height, int rounding);//optimized
+        //void filledRect(int x, int y, int width, int height, int rounding_top_left, int rounding_top_right, int rounding_bottom_right, int rounding_bottom_left);//todo
 
-        void emptyCircle(int x, int y, int radius);
-        void emptyCircle(int x, int y, int radius, double thickness);
-        void emptyCircle(int x, int y, int width, int height);
+        void filledCircle(int x, int y, int radius);//optimized
+        void filledCircle(int x, int y, int width, int height);//optimized
+
+        void emptyCircle(int x, int y, int radius);//optimized
+        void emptyCircle(int x, int y, int width, int height);//optimized
         //void emptyCircle(int x, int y, int width, int height, double thickness);
 
         void filledTriangle(int x1, int y1, int x2, int y2, int x3, int y3);

@@ -263,36 +263,60 @@ void SDL_Screen::line(int x1, int y1, int x2, int y2){
 }
 
 void SDL_Screen::filledRect(int x, int y, int size){
-    for(int i = x ; i < x + size; i++)
-        for(int j = y ; j < y + size; j++)
-            SDL_RenderDrawPoint(r, i, j);
+    SDL_Rect rect = {x, y, size, size};
+    SDL_RenderFillRect(r, &rect);
 }
 
 void SDL_Screen::filledRect(int x, int y, int width, int height){
-    for(int i = x ; i < x + width; i++)
-        for(int j = y ; j < y + height; j++)
-            SDL_RenderDrawPoint(r, i, j);
+    SDL_Rect rect = {x, y, width, height};
+    SDL_RenderFillRect(r, &rect);
 }
 
 void SDL_Screen::filledCircle(int x, int y, int radius){
-    for(int i = x - radius; i < x + radius; i++)
-        for(int j = y - radius; j < y + radius; j++)
-            if(distance(i, j, x, y) < radius)
-                SDL_RenderDrawPoint(r, i, j);
+    int x0 = radius;
+    int y0 = 0;
+    int err = 0;
+
+    while (x0 >= y0) {
+        SDL_RenderDrawLine(r, x - x0, y + y0, x + x0, y + y0);
+        SDL_RenderDrawLine(r, x - y0, y + x0, x + y0, y + x0);
+        SDL_RenderDrawLine(r, x - x0, y - y0, x + x0, y - y0);
+        SDL_RenderDrawLine(r, x - y0, y - x0, x + y0, y - x0);
+
+        if (err <= 0) {
+            y0 += 1;
+            err += 2*y0 + 1;
+        }
+        if (err > 0) {
+            x0 -= 1;
+            err -= 2*x0 + 1;
+        }
+    }
 }
 
 void SDL_Screen::emptyCircle(int x, int y, int radius){
-    for(int i = x - radius - 1; i < x + radius + 1; i++)
-        for(int j = y - radius - 1; j < y + radius + 1; j++)
-            if(distance(i, j, x, y) < radius + 1 && distance(i, j, x, y) > radius - 1)
-                SDL_RenderDrawPoint(r, i, j);
-}
+    int x0 = radius;
+    int y0 = 0;
+    int decision = 3 - 2 * radius;
 
-void SDL_Screen::emptyCircle(int x, int y, int radius, double thickness){
-    for(int i = x - radius - thickness; i < x + radius + thickness; i++)
-        for(int j = y - radius - thickness; j < y + radius + thickness; j++)
-            if(distance(i, j, x, y) < radius + thickness && distance(i, j, x, y) > radius - thickness)
-                SDL_RenderDrawPoint(r, i, j);
+    while (y0 <= x0) {
+        SDL_RenderDrawPoint(r, x0 + x, y0 + y);
+        SDL_RenderDrawPoint(r, y0 + x, x0 + y);
+        SDL_RenderDrawPoint(r, -x0 + x, y0 + y);
+        SDL_RenderDrawPoint(r, -y0 + x, x0 + y);
+        SDL_RenderDrawPoint(r, -x0 + x, -y0 + y);
+        SDL_RenderDrawPoint(r, -y0 + x, -x0 + y);
+        SDL_RenderDrawPoint(r, x0 + x, -y0 + y);
+        SDL_RenderDrawPoint(r, y0 + x, -x0 + y);
+        y0++;
+
+        if (decision > 0) {
+            x0--;
+            decision += 4 * (y0 - x0) + 10;
+        } else {
+            decision += 4 * y0 + 6;
+        }
+    }
 }
 
 void SDL_Screen::filledCircle(int x, int y, int width, int height){
@@ -419,17 +443,13 @@ void SDL_Screen::emptyPolygon(int x1, int y1, int x2, int y2, int x3, int y3, in
 }
 
 void SDL_Screen::emptyRect(int x, int y, int size){
-    SDL_RenderDrawLine(r, x, y, x + size, y);
-    SDL_RenderDrawLine(r, x, y, x, y + size);
-    SDL_RenderDrawLine(r, x + size, y + size, x, y + size);
-    SDL_RenderDrawLine(r, x + size, y + size, x + size, y);
+    SDL_Rect rect = {x, y, size, size};
+    SDL_RenderDrawRect(r, &rect);
 }
 
 void SDL_Screen::emptyRect(int x, int y, int width, int height){
-    SDL_RenderDrawLine(r, x, y, x+width, y);
-    SDL_RenderDrawLine(r, x, y, x, y+height);
-    SDL_RenderDrawLine(r, x+width, y+height, x+width, y);
-    SDL_RenderDrawLine(r, x+width, y+height, x, y+height);
+    SDL_Rect rect = {x, y, width, height};
+    SDL_RenderDrawRect(r, &rect);
 }
 
 void SDL_Screen::filledRect(int x, int y, int width, int height, int rounding){
