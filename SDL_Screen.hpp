@@ -6,6 +6,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <cmath>
 #include <vector>
+#include <sstream>
 
 
 class SDL_Screen{
@@ -156,8 +157,12 @@ class SDL_Screen{
 
 
         bool text(int x, int y, const char * text, TTF_Font *font);
-        bool text(int x, int y, const char * text, TTF_Font *font, unsigned char red, unsigned char green, unsigned char blue);
-        bool text(int x, int y, const char * text, TTF_Font *font, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
+        bool text(int x, int y, const char * text, TTF_Font *font, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha=255);
+
+        void paragraph(int x, int y, const char* text, TTF_Font* font, 
+                    unsigned char red, unsigned char green=255, unsigned char blue=255, unsigned char alpha=255);
+
+        void paragraph(int x, int y, const char* text, TTF_Font* font);
 };
 
 #endif

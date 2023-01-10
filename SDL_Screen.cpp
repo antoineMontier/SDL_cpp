@@ -111,7 +111,7 @@ bool SDL_Screen::OpenSDL(){
         SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Error", "Initialization SDL failed", NULL);
         exit(1);
         return false; // error
-    }   
+    }
 
     /*SDL_DisplayMode displayMode;
     if (SDL_GetDesktopDisplayMode(0, &displayMode) != 0)//know actual screen size
@@ -172,9 +172,9 @@ bool SDL_Screen::refreshAndDetailsAndEvents(){
     events();
     std::cout << "calc ticks : " << (SDL_GetTicks() - _ms);
     long freezed = SDL_GetTicks();
-    if(SDL_GetTicks() - _ms < 1000.0/_fps)
-        SDL_Delay(1000.0/_fps - (SDL_GetTicks() - _ms));//add ticks to get a the desired fps
-    std::cout << "\tfreeze ticks : " << (SDL_GetTicks() - freezed);
+    if(freezed - _ms < 1000.0/_fps)
+        SDL_Delay(1000.0/_fps - (freezed - _ms));//add ticks to get a the desired fps
+    std::cout << "  \tfreeze ticks : " << (SDL_GetTicks() - freezed);
     SDL_RenderPresent(r);//display
     std::cout << "\ttotal : " << (SDL_GetTicks() - _ms) << std::endl; 
     _ms = SDL_GetTicks();//get the ticks for another turn
@@ -201,12 +201,7 @@ void SDL_Screen::point(double x, double y){
 }
 
 void SDL_Screen::point(double x, double y, double thickness){
-    //int thick =  static_cast<int>(round(thickness));
-    for(double i = x - thickness/2; i < x + thickness/2 ; i++)
-        for(double j = y - thickness/2; j < y + thickness/2 ; j++)
-            if (SDL_RenderDrawPoint(r, i, j) != 0)
-                SDL_ExitWithError("failed to draw point");
-    
+    filledRect(x - thickness/2, y - thickness/2, thickness);    
 }
 
 void SDL_Screen::setColor(int red, int green, int blue, int alpha){
@@ -630,7 +625,7 @@ bool SDL_Screen::text(int x, int y, const char * text, TTF_Font *font){
     SDL_Texture *texture;
     SDL_Color textColor = {cr, cg, cb, ca};
 
-    surface = TTF_RenderText_Blended(font, text, textColor);
+    surface = TTF_RenderUTF8_Blended(font, text, textColor);
     texture = SDL_CreateTextureFromSurface(r, surface);
     text_width = surface->w;
     text_height = surface->h;
@@ -652,7 +647,7 @@ bool SDL_Screen::text(int x, int y, const char *text, TTF_Font *font, unsigned c
     SDL_Texture *texture;
     SDL_Color textColor = {red, green, blue, alpha};
 
-    surface = TTF_RenderText_Blended(font, text, textColor);
+    surface = TTF_RenderUTF8_Blended(font, text, textColor);
     texture = SDL_CreateTextureFromSurface(r, surface);
     text_width = surface->w;
     text_height = surface->h;
@@ -667,25 +662,57 @@ bool SDL_Screen::text(int x, int y, const char *text, TTF_Font *font, unsigned c
     return true;
 }
 
+void SDL_Screen::paragraph(int x, int y, const char* text, TTF_Font* font, 
+                        unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha){
 
-bool SDL_Screen::text(int x, int y, const char *text, TTF_Font *font, unsigned char red, unsigned char green, unsigned char blue){
-    int text_width;
-    int text_height;
-    SDL_Surface *surface;
-    SDL_Texture *texture;
-    SDL_Color textColor = {red, green, blue, 255};
+    SDL_Color text_color = {red, green, blue, alpha};
+    // Split the text by newline characters
+    std::stringstream textStream(text);
+    std::string line;
+    while (std::getline(textStream, line))
+    {
+        // Create a surface with the text 
+        SDL_Surface* lineSurface = TTF_RenderText_Blended(font, line.c_str(), text_color);
+        int w = lineSurface->w;
+        int h = lineSurface->h;
 
-    surface = TTF_RenderText_Blended(font, text, textColor);
-    texture = SDL_CreateTextureFromSurface(r, surface);
-    text_width = surface->w;
-    text_height = surface->h;
-    SDL_FreeSurface(surface);
-    SDL_Rect rectangle;
-    rectangle.x = x;
-    rectangle.y = y;
-    rectangle.w = text_width;
-    rectangle.h = text_height;
-    SDL_RenderCopy(r, texture, NULL, &rectangle);
-    SDL_DestroyTexture(texture);
-    return true;
+        SDL_Texture* lineTexture = SDL_CreateTextureFromSurface(r, lineSurface);
+        SDL_Rect lineRect = { x, y, w, h };
+        SDL_RenderCopy(r, lineTexture, NULL, &lineRect);// display
+
+        // Free memory
+        SDL_FreeSurface(lineSurface);
+        SDL_DestroyTexture(lineTexture);
+
+        //next line of text
+        y += TTF_FontHeight(font);
+    }
+}
+
+void SDL_Screen::paragraph(int x, int y, const char* text, TTF_Font* font){
+    Uint8 cr, cg, cb, ca;
+    if(SDL_GetRenderDrawColor(r, &cr, &cg, &cb, &ca) != 0)
+        SDL_ExitWithError("failed to save color");
+    SDL_Color text_color = {cr, cg, cb, ca};
+    // Split the text by newline characters
+    std::stringstream textStream(text);
+    std::string line;
+    while (std::getline(textStream, line))
+    {
+        // Create a surface with the text 
+        SDL_Surface* lineSurface = TTF_RenderText_Blended(font, line.c_str(), text_color);
+        int w = lineSurface->w;
+        int h = lineSurface->h;
+
+        SDL_Texture* lineTexture = SDL_CreateTextureFromSurface(r, lineSurface);
+        SDL_Rect lineRect = { x, y, w, h };
+        SDL_RenderCopy(r, lineTexture, NULL, &lineRect);// display
+
+        // Free memory
+        SDL_FreeSurface(lineSurface);
+        SDL_DestroyTexture(lineTexture);
+
+        //next line of text
+        y += TTF_FontHeight(font);
+    }
 }
