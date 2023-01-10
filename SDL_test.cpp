@@ -15,8 +15,7 @@ int main(){
 
         s.setColor(255, 0, 0, 255);
 
-        s.emptyCircle(500, 500, 400, 800);
-        s.filledRect(150, 150, 800, 600, 150);
+        s.filledTriangle(10, 10, 990, 500, 10, 990);
 
         s.refreshAndDetailsAndEvents();
     }

@@ -395,37 +395,79 @@ int SDL_Screen::W(){return _width;}
 
 int SDL_Screen::H(){return _height;}
 
+void SDL_Screen::filledTriangleP(int x1, int y1, int x2, int y2, int x3, int y3){
+    //sort by y-coordinate
+    if (y1 > y2){std::swap(y1, y2); std::swap(x1, x2);}
+    if (y1 > y3){std::swap(y1, y3); std::swap(x1, x3);}
+    if (y2 > y3){std::swap(y2, y3); std::swap(x2, x3);}
+
+    // calculate the edges of the triangle
+    double dx_far = static_cast<double>(x3-x1)/(y3 - y1);
+    double dx_top = static_cast<double>(x2-x1)/(y2 - y1);
+    double dx_bot = static_cast<double>(x3-x2)/(y3 - y2);
+
+    double xf = x1;
+    double xt = x1;
+
+    // iterate through each scanline of the triangle
+    for (int y = y1; y <= y2; y++) {
+        int minx =static_cast<int>(ceil( min(xf, xt)));
+        int maxx = static_cast<int>( floor(max(xf, xt)));
+
+        for (int x = minx; x <= maxx; x++)
+            SDL_RenderDrawPoint(r, x, y);
+        xf += dx_far;
+        xt += dx_top;
+    }
+    xf = x2;
+    xt = x3;
+
+    // bottom half of the triangle
+    for (int y = y2; y <= y3; y++) {
+        int minx = static_cast<int>(ceil(min(xf, xt) ));
+        int maxx = static_cast<int>(floor(max(xf, xt)));
+
+        for (int x = minx; x <= maxx; x++) 
+            SDL_RenderDrawPoint(r, x, y);
+        xf += dx_bot;
+        xt += dx_far;
+    }
+}
+
 void SDL_Screen::filledTriangle(int x1, int y1, int x2, int y2, int x3, int y3){
-    double s_x = fmin(x1, fmin(x2, x3));
-    double s_y = fmin(y1, fmin(y2, y3));
-    double f_x = fmax(x1, fmax(x2, x3));
-    double f_y = fmax(y1, fmax(y2, y3));
-    for (double a = s_x; a <= f_x; a++)
-        for (double b = s_y; b <= f_y; b++)
-            if (inTheTriangle(x1, y1, x2, y2, x3, y3, a, b))
-                SDL_RenderDrawPoint(r, a, b);
+    // sort
+    if (y1 > y2){ std::swap(y1, y2); std::swap(x1, x2);}
+    if (y1 > y3){ std::swap(y1, y3); std::swap(x1, x3);}
+    if (y2 > y3){ std::swap(y2, y3); std::swap(x2, x3);}
+
+    // edges of the triangle
+    int dx1 = x2 -x1, dy1 = y2-y1;
+    int dx2 = x3 -x1, dy2 = y3-y1;
+    int dx3 = x3 -x2, dy3 = y3-y2;
+
+    int start, end;
+    for(int y = y1; y <= y3; y++) {
+
+        if(y <= y2){
+            start = x1 + (y - y1)*dx1 / dy1;
+            end = x1 + (y - y1)*dx2 / dy2;
+        }
+        else{
+            start = x2 + (y - y2) * dx3 / dy3;
+            end = x1 + (y - y1) * dx2 / dy2;
+        }
+
+        if(start > end){ std::swap(start, end); }
+
+        for(int x = start; x <= end; x++)
+            SDL_RenderDrawPoint(r, x, y);
+    }
 }
 
 void SDL_Screen::emptyTriangle(int x1, int y1, int x2, int y2, int x3, int y3){
     SDL_RenderDrawLine(r, x1, y1, x2, y2);
     SDL_RenderDrawLine(r, x3, y3, x2, y2);
     SDL_RenderDrawLine(r, x1, y1, x3, y3);
-}
-
-bool SDL_Screen::inTheTriangle(double x1, double y1, double x2, double y2, double x3, double y3, double a, double b){
-    int sign1 = -1, sign2 = -1, sign3 = -1;
-    if (((x2 - x1) * (b - y1) - (y2 - y1) * (a - x1)) >= 0)
-        sign1 = 1;
-
-    if (((x3 - x2) * (b - y2) - (y3 - y2) * (a - x2)) >= 0)
-        sign2 = 1;
-
-    if (((x1 - x3) * (b - y3) - (a - x3) * (y1 - y3)) >= 0)
-        sign3 = 1;
-
-    if (sign1 == sign2 && sign2 == sign3)
-        return true;
-    return false;
 }
 
 void SDL_Screen::filledPolygon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4){

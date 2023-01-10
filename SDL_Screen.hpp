@@ -27,8 +27,6 @@ class SDL_Screen{
 
         double distance(double x1, double y1, double x2, double y2);
 
-        bool inTheTriangle(double x1, double y1, double x2, double y2, double x3, double y3, double a, double b);
-
     public:
 
         /// @brief creates a screen of 600*480 entitled "SDL_Screen" with 30 fps and Open SDL (initialisation)
@@ -135,6 +133,7 @@ class SDL_Screen{
         void emptyCircle(int x, int y, int width, int height);//optimized
         //void emptyCircle(int x, int y, int width, int height, double thickness);
 
+        void filledTriangleP(int x1, int y1, int x2, int y2, int x3, int y3);//more precise version
         void filledTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
 
         void emptyTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
