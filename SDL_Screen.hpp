@@ -22,6 +22,7 @@ class SDL_Screen{
         double _fps;
         double fps_max = 180;
         static bool instanceExist;
+        bool program_running;
 
         void SDL_ExitWithError(const char *string);
 
@@ -68,6 +69,8 @@ class SDL_Screen{
 
         bool refresh();
         bool refreshAndDetails();
+        bool refreshAndEvents();
+        bool refreshAndDetailsAndEvents();
 
         bool freeze(unsigned int ms);
 
@@ -115,6 +118,12 @@ class SDL_Screen{
         void emptyPolygon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 
         bool setFPS(double fps);
+
+        bool isRunning();
+
+        void stopRunning();
+
+        void events();
 };
 
 #endif

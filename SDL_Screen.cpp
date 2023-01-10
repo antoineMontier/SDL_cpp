@@ -13,6 +13,7 @@ SDL_Screen::SDL_Screen(){
     title = "SDL_Screen";
     _fps = 30.0;
     _ms = 0;
+    program_running = true;
 
     OpenSDL();
 }
@@ -26,6 +27,7 @@ SDL_Screen::SDL_Screen(double window_width, double window_height){
     title = "SDL_Screen";
     _fps = 30.0;
     _ms = 0;
+    program_running = true;
 
     OpenSDL();
 }
@@ -39,6 +41,7 @@ SDL_Screen::SDL_Screen(const char* window_title){
     title = window_title;
     _fps = 30.0;
     _ms = 0;
+    program_running = true;
 
     OpenSDL();
 }
@@ -52,6 +55,7 @@ SDL_Screen::SDL_Screen(double window_width, double window_height, const char* wi
     title = window_title;
     _fps = 30.0;
     _ms = 0;
+    program_running = true;
 
     OpenSDL();
 }
@@ -69,6 +73,7 @@ SDL_Screen::SDL_Screen(double window_width, double window_height, double fps){
     title = "SDL_Screen";
     _fps = fps;
     _ms = 0;
+    program_running = true;
 
     OpenSDL();
 }
@@ -86,6 +91,7 @@ SDL_Screen::SDL_Screen(double window_width, double window_height, const char* wi
     title = window_title;
     _fps = fps;
     _ms = 0;
+    program_running = true;
 
     OpenSDL();
 }
@@ -98,7 +104,6 @@ SDL_Screen::~SDL_Screen(){
 }
 
 double SDL_Screen::getFPS(){return _fps;}
-
 
 bool SDL_Screen::OpenSDL(){
 
@@ -153,6 +158,29 @@ bool SDL_Screen::refreshAndDetails(){
     _ms = SDL_GetTicks();//get the ticks for another turn
     return true;
 }
+
+bool SDL_Screen::refreshAndEvents(){
+    events();
+    if(SDL_GetTicks() - _ms < _fps)
+        SDL_Delay(1000.0/_fps - (SDL_GetTicks() - _ms));//add ticks to get a the desired fps
+    SDL_RenderPresent(r);//display
+    _ms = SDL_GetTicks();//get the ticks for another turn
+    return true;
+}
+
+bool SDL_Screen::refreshAndDetailsAndEvents(){
+    events();
+    std::cout << "calc ticks : " << (SDL_GetTicks() - _ms);
+    long freezed = SDL_GetTicks();
+    if(SDL_GetTicks() - _ms < _fps)
+        SDL_Delay(1000.0/_fps - (SDL_GetTicks() - _ms));//add ticks to get a the desired fps
+    std::cout << "\tfreeze ticks : " << (SDL_GetTicks() - freezed);
+    SDL_RenderPresent(r);//display
+    std::cout << "\ttotal : " << (SDL_GetTicks() - _ms) << std::endl; 
+    _ms = SDL_GetTicks();//get the ticks for another turn
+    return true;
+}
+
 
 bool SDL_Screen::freeze(unsigned int ms){
     SDL_Delay(ms);
@@ -223,7 +251,6 @@ void SDL_Screen::bg(int red, int green, int blue){
     //reset the color as before
     setColor(cr, cg, cb, ca);
 }
-
 
 void SDL_Screen::updateSize(){
     int _wi, _he;
@@ -474,3 +501,47 @@ bool SDL_Screen::setFPS(double fps){
     _fps = fps;
     return true;
 }
+
+void SDL_Screen::events(){
+    while (SDL_PollEvent(&e))
+        { // reads all the events (mouse moving, key pressed...)        //possible to wait for an event with SDL_WaitEvent
+            switch (e.type)
+            {
+            case SDL_WINDOWEVENT:
+                if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+                    updateSize();
+                break;
+            case SDL_QUIT:
+                program_running = false; // quit the program if the user closes the window
+                break;
+
+            case SDL_KEYDOWN: // SDL_KEYDOWN : hold a key            SDL_KEYUP : release a key
+                switch (e.key.keysym.sym){ // returns the key ('0' ; 'e' ; 'SPACE'...)
+
+                case SDLK_ESCAPE:
+                    program_running = false; // escape the program if user presses esc
+                    break;
+
+                default:
+                    break;
+                }
+
+            case SDL_KEYUP:
+                switch (e.key.keysym.sym){
+
+                    default:
+                        break;
+                }
+
+            default:
+                break;
+            }
+        }
+}
+
+bool SDL_Screen::isRunning(){return program_running;}
+
+void SDL_Screen::stopRunning(){program_running = false;}
+
+
+
