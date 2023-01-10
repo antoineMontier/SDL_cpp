@@ -8,6 +8,8 @@ SDL_Screen::SDL_Screen(){
     title = "SDL_Screen";
     _fps = 30.0;
     _ms = 0;
+
+    OpenSDL();
 }
 
 SDL_Screen::SDL_Screen(double window_width, double window_height){
@@ -16,6 +18,8 @@ SDL_Screen::SDL_Screen(double window_width, double window_height){
     title = "SDL_Screen";
     _fps = 30.0;
     _ms = 0;
+
+    OpenSDL();
 }
 
 SDL_Screen::SDL_Screen(const char* window_title){
@@ -24,6 +28,8 @@ SDL_Screen::SDL_Screen(const char* window_title){
     title = window_title;
     _fps = 30.0;
     _ms = 0;
+
+    OpenSDL();
 }
 
 SDL_Screen::SDL_Screen(double window_width, double window_height, const char* window_title){
@@ -32,22 +38,43 @@ SDL_Screen::SDL_Screen(double window_width, double window_height, const char* wi
     title = window_title;
     _fps = 30.0;
     _ms = 0;
+
+    OpenSDL();
 }
 
 SDL_Screen::SDL_Screen(double window_width, double window_height, double fps){
+    if(fps <= 0)
+        fps = 1;
+    else if(fps >= fps_max)
+        fps = fps_max - 1;
     _width = window_width;
     _height = window_height;
     title = "SDL_Screen";
     _fps = fps;
     _ms = 0;
+
+    OpenSDL();
 }
 
 SDL_Screen::SDL_Screen(double window_width, double window_height, const char* window_title, double fps){
+    if(fps <= 0)
+        fps = 1;
+    else if(fps >= fps_max)
+        fps = fps_max - 1;
     _width = window_width;
     _height = window_height;
     title = window_title;
     _fps = fps;
     _ms = 0;
+
+    OpenSDL();
+}
+
+SDL_Screen::~SDL_Screen(){
+    if(!CloseSDL())
+        std::cout << "Failed to close SDL" << std::endl;
+    else
+        std::cout << "Closed SDL successfully" << std::endl;
 }
 
 double SDL_Screen::getFPS(){return _fps;}
@@ -295,9 +322,9 @@ void SDL_Screen::emptyCircle(int x, int y, int width, int height){
     }
 }
 
-int SDL_Screen::getW(){return _width;}
+int SDL_Screen::W(){return _width;}
 
-int SDL_Screen::getH(){return _height;}
+int SDL_Screen::H(){return _height;}
 
 void SDL_Screen::filledTriangle(int x1, int y1, int x2, int y2, int x3, int y3){
     double s_x = fmin(x1, fmin(x2, x3));
@@ -421,4 +448,9 @@ void SDL_Screen::emptyRect(int x, int y, int width, int height, int rounding){
                 SDL_RenderDrawPoint(r, i, j);
 }
 
-void SDL_Screen::setFPS(double fps){_fps = fps;}
+bool SDL_Screen::setFPS(double fps){
+    if(fps >= fps_max || fps <= 0)
+        return false;
+    _fps = fps;
+    return true;
+}

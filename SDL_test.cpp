@@ -7,27 +7,21 @@ using namespace std;
 
 int main(){
 
-    SDL_Screen s;
-    s.OpenSDL();
-    
-
+    SDL_Screen s(1000, 1000, "SDL_Lab", 160);
 
     bool program_launched = true;
     int x;
-
-    s.setFPS(120);
-
+    
     while(program_launched){
         SDL_Event evt; // ask events
-        
 
         s.setColor(0, 0, 0, 255);
         
         s.bg();
         
         s.setColor(255, 0, 0, 255);
-        s.filledCircle(x, s.getH() - x, 20);
-        x = (x + 2) % s.getH();
+        s.filledCircle(x, s.H() - x, 20);
+        x = (x + 2) % s.H();
 
 
         
@@ -63,9 +57,5 @@ int main(){
         s.refreshAndDetails(); // refresh the render and add the fps desired delay
     }
 
-
-
-    s.CloseSDL();
-    std::cout << "Closed SDL successfully" << std::endl;
     return 0;
 }

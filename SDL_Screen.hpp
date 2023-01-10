@@ -19,6 +19,7 @@ class SDL_Screen{
         SDL_Renderer *r;
         const char * title;
         double _fps;
+        double fps_max = 180;
 
         void SDL_ExitWithError(const char *string);
 
@@ -28,17 +29,39 @@ class SDL_Screen{
 
     public:
 
+        /// @brief creates a screen of 600*480 entitled "SDL_Screen" with 30 fps and Open SDL (initialisation)
         SDL_Screen();
+        /// @brief creates a screen entitled "SDL_Screen" with 30 fps
+        /// @param window_width width of the screen
+        /// @param window_height height of the screen
         SDL_Screen(double window_width, double window_height);
+        /// @brief creates a screen entitled "SDL_Screen" and Open SDL (initialisation)
+        /// @param window_width width of the screen
+        /// @param window_height height of the screen
+        /// @param fps frames per second
         SDL_Screen(double window_width, double window_height, double fps);
+        /// @brief creates a screen of 600*480 with 30 fps and Open SDL (initialisation)
+        /// @param window_title title of the new screen
         SDL_Screen(const char* window_title);
+        /// @brief creates a screen with 30 fps
+        /// @param window_width width of the screen
+        /// @param window_height height of the screen
+        /// @param window_title title of the screen
         SDL_Screen(double window_width, double window_height, const char* window_title);
+        /// @brief creates a screen and Open SDL (initialisation)
+        /// @param window_width width of the screen
+        /// @param window_height height of the screen
+        /// @param window_title title of the screen
+        /// @param fps frames per second
         SDL_Screen(double window_width, double window_height, const char* window_title, double fps);
+
+        /// @brief Quit SDL, prints if it's a success or not in the cout
+        ~SDL_Screen();
 
         bool OpenSDL();
 
-        int getW();
-        int getH();
+        int W();
+        int H();
         double getFPS();
 
         bool refresh();
@@ -89,7 +112,7 @@ class SDL_Screen{
 
         void emptyPolygon(int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4);
 
-        void setFPS(double fps);
+        bool setFPS(double fps);
 };
 
 #endif
