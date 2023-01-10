@@ -2,7 +2,12 @@
 
 using namespace std;
 
+bool SDL_Screen::instanceExist = false; // no more than one instance
+
 SDL_Screen::SDL_Screen(){
+    if(instanceExist)
+        throw new std::runtime_error("Multiples instances of SDL_Screen are not allowed");
+    instanceExist = true;
     _width = 600;
     _height = 480;
     title = "SDL_Screen";
@@ -13,6 +18,9 @@ SDL_Screen::SDL_Screen(){
 }
 
 SDL_Screen::SDL_Screen(double window_width, double window_height){
+    if(instanceExist)
+        throw new std::runtime_error("Multiples instances of SDL_Screen are not allowed");
+    instanceExist = true;
     _width = window_width;
     _height = window_height;
     title = "SDL_Screen";
@@ -23,6 +31,9 @@ SDL_Screen::SDL_Screen(double window_width, double window_height){
 }
 
 SDL_Screen::SDL_Screen(const char* window_title){
+    if(instanceExist)
+        throw new std::runtime_error("Multiples instances of SDL_Screen are not allowed");
+    instanceExist = true;
     _width = 600;
     _height = 480;
     title = window_title;
@@ -33,6 +44,9 @@ SDL_Screen::SDL_Screen(const char* window_title){
 }
 
 SDL_Screen::SDL_Screen(double window_width, double window_height, const char* window_title){
+    if(instanceExist)
+        throw new std::runtime_error("Multiples instances of SDL_Screen are not allowed");
+    instanceExist = true;
     _width = window_width;
     _height = window_height;
     title = window_title;
@@ -43,6 +57,9 @@ SDL_Screen::SDL_Screen(double window_width, double window_height, const char* wi
 }
 
 SDL_Screen::SDL_Screen(double window_width, double window_height, double fps){
+    if(instanceExist)
+        throw new std::runtime_error("Multiples instances of SDL_Screen are not allowed");
+    instanceExist = true;
     if(fps <= 0)
         fps = 1;
     else if(fps >= fps_max)
@@ -57,6 +74,9 @@ SDL_Screen::SDL_Screen(double window_width, double window_height, double fps){
 }
 
 SDL_Screen::SDL_Screen(double window_width, double window_height, const char* window_title, double fps){
+    if(instanceExist)
+        throw new std::runtime_error("Multiples instances of SDL_Screen are not allowed");
+    instanceExist = true;
     if(fps <= 0)
         fps = 1;
     else if(fps >= fps_max)

@@ -17,9 +17,11 @@ class SDL_Screen{
         long _ms;
         SDL_Window *w;
         SDL_Renderer *r;
+        SDL_Event e;
         const char * title;
         double _fps;
         double fps_max = 180;
+        static bool instanceExist;
 
         void SDL_ExitWithError(const char *string);
 
