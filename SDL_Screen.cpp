@@ -140,7 +140,7 @@ bool SDL_Screen::CloseSDL(){
 }
 
 bool SDL_Screen::refresh(){
-    if(SDL_GetTicks() - _ms < _fps)
+    if(SDL_GetTicks() - _ms < 1000.0/_fps)
         SDL_Delay(1000.0/_fps - (SDL_GetTicks() - _ms));//add ticks to get a the desired fps
     SDL_RenderPresent(r);//display
     _ms = SDL_GetTicks();//get the ticks for another turn
@@ -150,7 +150,7 @@ bool SDL_Screen::refresh(){
 bool SDL_Screen::refreshAndDetails(){
     std::cout << "calc ticks : " << (SDL_GetTicks() - _ms);
     long freezed = SDL_GetTicks();
-    if(SDL_GetTicks() - _ms < _fps)
+    if(SDL_GetTicks() - _ms < 1000.0/_fps)
         SDL_Delay(1000.0/_fps - (SDL_GetTicks() - _ms));//add ticks to get a the desired fps
     std::cout << "\tfreeze ticks : " << (SDL_GetTicks() - freezed);
     SDL_RenderPresent(r);//display
@@ -161,7 +161,7 @@ bool SDL_Screen::refreshAndDetails(){
 
 bool SDL_Screen::refreshAndEvents(){
     events();
-    if(SDL_GetTicks() - _ms < _fps)
+    if(SDL_GetTicks() - _ms < 1000.0/_fps)
         SDL_Delay(1000.0/_fps - (SDL_GetTicks() - _ms));//add ticks to get a the desired fps
     SDL_RenderPresent(r);//display
     _ms = SDL_GetTicks();//get the ticks for another turn
@@ -172,7 +172,7 @@ bool SDL_Screen::refreshAndDetailsAndEvents(){
     events();
     std::cout << "calc ticks : " << (SDL_GetTicks() - _ms);
     long freezed = SDL_GetTicks();
-    if(SDL_GetTicks() - _ms < _fps)
+    if(SDL_GetTicks() - _ms < 1000.0/_fps)
         SDL_Delay(1000.0/_fps - (SDL_GetTicks() - _ms));//add ticks to get a the desired fps
     std::cout << "\tfreeze ticks : " << (SDL_GetTicks() - freezed);
     SDL_RenderPresent(r);//display
@@ -180,7 +180,6 @@ bool SDL_Screen::refreshAndDetailsAndEvents(){
     _ms = SDL_GetTicks();//get the ticks for another turn
     return true;
 }
-
 
 bool SDL_Screen::freeze(unsigned int ms){
     SDL_Delay(ms);
@@ -195,7 +194,6 @@ void SDL_Screen::SDL_ExitWithError(const char *string)
 }
 
 double SDL_Screen::distance(double x1, double y1, double x2, double y2){return sqrt((x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2));}
-
 
 void SDL_Screen::point(double x, double y){
     if (SDL_RenderDrawPoint(r, x, y) != 0)
@@ -543,5 +541,89 @@ bool SDL_Screen::isRunning(){return program_running;}
 
 void SDL_Screen::stopRunning(){program_running = false;}
 
+bool SDL_Screen::rollover(int mx, int my, int x, int y, int w, int h)
+{
+    if (mx >= x && mx < x + w && my > y && my < y + h)
+        return true;
+    return false;
+}
+
+bool SDL_Screen::setFont(TTF_Font **font, const char* font_file, int size)
+{
+    *font = TTF_OpenFont(font_file, size);
+    if (*font == nullptr){
+        throw new runtime_error("error : font not found");
+        return false;
+    }
+    return true;
+}
+
+bool SDL_Screen::text(int x, int y, const char * text, TTF_Font *font){
+    Uint8 cr, cg, cb, ca;
+    if(SDL_GetRenderDrawColor(r, &cr, &cg, &cb, &ca) != 0)
+        SDL_ExitWithError("failed to save color");
+    int text_width;
+    int text_height;
+    SDL_Surface *surface;
+    SDL_Texture *texture;
+    SDL_Color textColor = {cr, cg, cb, ca};
+
+    surface = TTF_RenderText_Blended(font, text, textColor);
+    texture = SDL_CreateTextureFromSurface(r, surface);
+    text_width = surface->w;
+    text_height = surface->h;
+    SDL_FreeSurface(surface);
+    SDL_Rect rectangle;
+    rectangle.x = x;
+    rectangle.y = y;
+    rectangle.w = text_width;
+    rectangle.h = text_height;
+    SDL_RenderCopy(r, texture, NULL, &rectangle);
+    SDL_DestroyTexture(texture);
+    return true;
+}
+
+bool SDL_Screen::text(int x, int y, const char *text, TTF_Font *font, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha){
+    int text_width;
+    int text_height;
+    SDL_Surface *surface;
+    SDL_Texture *texture;
+    SDL_Color textColor = {red, green, blue, alpha};
+
+    surface = TTF_RenderText_Blended(font, text, textColor);
+    texture = SDL_CreateTextureFromSurface(r, surface);
+    text_width = surface->w;
+    text_height = surface->h;
+    SDL_FreeSurface(surface);
+    SDL_Rect rectangle;
+    rectangle.x = x;
+    rectangle.y = y;
+    rectangle.w = text_width;
+    rectangle.h = text_height;
+    SDL_RenderCopy(r, texture, NULL, &rectangle);
+    SDL_DestroyTexture(texture);
+    return true;
+}
 
 
+bool SDL_Screen::text(int x, int y, const char *text, TTF_Font *font, unsigned char red, unsigned char green, unsigned char blue){
+    int text_width;
+    int text_height;
+    SDL_Surface *surface;
+    SDL_Texture *texture;
+    SDL_Color textColor = {red, green, blue, 255};
+
+    surface = TTF_RenderText_Blended(font, text, textColor);
+    texture = SDL_CreateTextureFromSurface(r, surface);
+    text_width = surface->w;
+    text_height = surface->h;
+    SDL_FreeSurface(surface);
+    SDL_Rect rectangle;
+    rectangle.x = x;
+    rectangle.y = y;
+    rectangle.w = text_width;
+    rectangle.h = text_height;
+    SDL_RenderCopy(r, texture, NULL, &rectangle);
+    SDL_DestroyTexture(texture);
+    return true;
+}

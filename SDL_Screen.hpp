@@ -8,7 +8,6 @@
 #include <vector>
 
 
-
 class SDL_Screen{
     
     private:
@@ -67,9 +66,17 @@ class SDL_Screen{
         int H();
         double getFPS();
 
+        /// @brief refresh the screen with the new shapes
+        /// @return true if successful
         bool refresh();
+        /// @brief refresh the screen with the new shapes and adds to the cout calculations ticks, freezed ticks and total ticks
+        /// @return true if successful
         bool refreshAndDetails();
+        /// @brief refresh the screen with the new shapes and asks for events
+        /// @return true if successful
         bool refreshAndEvents();
+        /// @brief refresh the screen with the new shapes, asks for events and adds to the cout calculations ticks, freezed ticks and total ticks
+        /// @return true if successful
         bool refreshAndDetailsAndEvents();
 
         bool freeze(unsigned int ms);
@@ -124,6 +131,15 @@ class SDL_Screen{
         void stopRunning();
 
         void events();
+
+        static bool rollover(int mx, int my, int x, int y, int w, int h);
+
+        bool setFont(TTF_Font **font, const char * font_file, int size);
+
+
+        bool text(int x, int y, const char * text, TTF_Font *font);
+        bool text(int x, int y, const char * text, TTF_Font *font, unsigned char red, unsigned char green, unsigned char blue);
+        bool text(int x, int y, const char * text, TTF_Font *font, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha);
 };
 
 #endif
