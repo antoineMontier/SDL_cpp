@@ -16,7 +16,7 @@ int main(int argc, char **argv){
         s.setColor(255, 0, 0, 255);
 
         s.paragraph(200, 400, "hello world\nI'm antoine\na 19yo guy trying to display\n text on multiple\n lines\nusing ttf from SDL2", f);
-
+        s.displayPortions(5, 5);
         s.refreshAndDetailsAndEvents();
     }
     
