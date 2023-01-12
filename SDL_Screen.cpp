@@ -343,6 +343,31 @@ void SDL_Screen::emptyCircle(int x, int y, int radius){
     }
 }
 
+void SDL_Screen::filledCircle(int x, int y, int radius, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha){
+    SDL_SetRenderDrawColor(r, red, green, blue, alpha);
+    int x0 = radius;
+    int y0 = 0;
+    int err = 0;
+
+    while (x0 >= y0) {
+        SDL_RenderDrawLine(r, x - x0, y + y0, x + x0, y + y0);
+        SDL_RenderDrawLine(r, x - y0, y + x0, x + y0, y + x0);
+        SDL_RenderDrawLine(r, x - x0, y - y0, x + x0, y - y0);
+        SDL_RenderDrawLine(r, x - y0, y - x0, x + y0, y - x0);
+
+        if (err <= 0) {
+            y0 += 1;
+            err += 2*y0 + 1;
+        }
+        if (err > 0) {
+            x0 -= 1;
+            err -= 2*x0 + 1;
+        }
+    }
+    SDL_SetRenderDrawColor(r, _red, _green, _blue, _alpha);
+}
+
+
 void SDL_Screen::filledCircle(int x, int y, int width, int height){
     int xc = 0;
     int yc = height;
@@ -538,6 +563,29 @@ void SDL_Screen::filledRect(int x, int y, int width, int height, int rounding){
     filledCircle(x + width - rounding, y + height - rounding, rounding);//bottom right
 }
 
+void SDL_Screen::filledRect(int x, int y, int width, int height, int rounding, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha){
+    SDL_SetRenderDrawColor(r, red, green, blue, alpha);
+    //first let's fix the rounding if it's bellow 0 or greater than the half of the smallest side of the rectangle
+    if(rounding <= 0){
+        filledRect(x, y, width, height);
+        return;
+    }
+    if(rounding > fmin(width, height)/2.0)
+        rounding = fmin(width, height)/2.0;
+    //let's draw the core rectangles
+    filledRect(x, y + rounding, width, height-2*rounding);
+    filledRect(x + rounding, y, width-2*rounding, height);
+
+    //draw the 4 corners
+
+    filledCircle(x +  rounding, y + rounding, rounding);//top left
+    filledCircle(x + width - rounding, y + rounding, rounding);//top right
+    filledCircle(x + rounding, y + height - rounding, rounding);//bottom left
+    filledCircle(x + width - rounding, y + height - rounding, rounding);//bottom right
+    SDL_SetRenderDrawColor(r, _red, _green, _blue, _alpha);
+}
+
+
 void SDL_Screen::emptyRect(int x, int y, int width, int height, int rounding){
     //first let's fix the rounding if it's bellow 0 or greater than the half of the smallest side of the rectangle
     if(rounding <= 0){
@@ -578,6 +626,50 @@ void SDL_Screen::emptyRect(int x, int y, int width, int height, int rounding){
             if(distance(x + width - rounding, y + height - rounding, i, j) <= rounding + thick && distance(x + width - rounding, y + height - rounding, i, j) >= rounding - thick)
                 SDL_RenderDrawPoint(r, i, j);
 }
+void SDL_Screen::emptyRect(int x, int y, int width, int height, int rounding, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha){
+    SDL_SetRenderDrawColor(r, red, green, blue, alpha);
+    //first let's fix the rounding if it's bellow 0 or greater than the half of the smallest side of the rectangle
+    if(rounding <= 0){
+        emptyRect(x, y, width, height);
+        return;
+    }
+    if(rounding > fmin(width, height)/2.0)
+        rounding = fmin(width, height)/2.0;
+    //draw the lines without corners
+    double thick = 0.6;
+    SDL_RenderDrawLine(r, x + rounding - 1, y, x + width - rounding + 1, y);//top
+    SDL_RenderDrawLine(r, x + rounding - 1, y + height, x + width - rounding + 1, y + height);//bottom
+    SDL_RenderDrawLine(r, x, y + rounding - 1, x, y + height - rounding + 1);//left
+    SDL_RenderDrawLine(r, x + width, y + rounding - 1, x + width, y + height - rounding + 1);//right
+    //now draw the four corners
+
+    //==== top left ====
+    for(int i = x - thick ; i < x + rounding + thick; i++)
+        for(int j = y - thick; j < y + rounding + thick; j++)
+            if(distance(x + rounding, y + rounding, i, j) <= rounding + thick && distance(x + rounding, y + rounding, i, j) >= rounding - thick)
+                SDL_RenderDrawPoint(r, i, j);
+    
+    //==== top right ====
+    for(int i = x + width - rounding - thick; i < x + width + thick; i++)
+        for(int j = y - thick ; j < y + rounding + thick ; j++)
+            if(distance(x + width - rounding, y + rounding, i, j) >= rounding - thick && distance(x + width - rounding, y + rounding, i, j) <= rounding + thick) 
+                SDL_RenderDrawPoint(r, i, j);
+
+    //==== bottom left ====
+    for(int i = x - thick; i < x + rounding + thick; i++)
+        for(int j = y + height - rounding - thick; j < y + height + thick; j++)
+            if(distance(x + rounding, y + height - rounding, i, j) >= rounding - thick && distance(x + rounding, y + height - rounding, i, j) <= rounding + thick) 
+                SDL_RenderDrawPoint(r, i, j);
+
+    //==== bottom right ====
+    for(int i = x + width - rounding - thick; i < x + width + thick; i++)
+        for(int j = y + height - rounding - thick; j < y + height + thick; j++)
+            if(distance(x + width - rounding, y + height - rounding, i, j) <= rounding + thick && distance(x + width - rounding, y + height - rounding, i, j) >= rounding - thick)
+                SDL_RenderDrawPoint(r, i, j);
+    SDL_SetRenderDrawColor(r, _red, _green, _blue, _alpha);
+}
+
+
 
 bool SDL_Screen::setFPS(double fps){
     if(fps >= fps_max || fps <= 0)
@@ -585,6 +677,59 @@ bool SDL_Screen::setFPS(double fps){
     _fps = fps;
     return true;
 }
+
+void SDL_Screen::events(std::string * buff1){
+    static bool typing = true;
+    std::cout << typing << "\t";
+    while (SDL_PollEvent(&e))
+        { // reads all the events (mouse moving, key pressed...)        //possible to wait for an event with SDL_WaitEvent
+            switch (e.type)
+            {
+            case SDL_WINDOWEVENT:
+                if (e.window.event == SDL_WINDOWEVENT_RESIZED)
+                    updateSize();
+                break;
+            case SDL_TEXTINPUT:
+                (*buff1) += e.text.text;
+                break;
+
+            case SDL_QUIT:
+                program_running = false; // quit the program if the user closes the window
+                break;
+
+            case SDL_KEYDOWN: // SDL_KEYDOWN : hold a key            SDL_KEYUP : release a key
+                switch (e.key.keysym.sym){ // returns the key ('0' ; 'e' ; 'SPACE'...)
+
+                    case SDLK_RETURN:
+                        typing = !typing;
+                        break;
+
+                    case SDLK_BACKSPACE:
+                        if(buff1->length()>0)
+                            buff1->pop_back();
+                        break;
+
+                    case SDLK_ESCAPE:
+                        program_running = false; // escape the program if user presses esc
+                        break;
+
+                    default:
+                        break;
+                }
+
+            case SDL_KEYUP:
+                switch (e.key.keysym.sym){
+
+                    default:
+                        break;
+                }
+
+            default:
+                break;
+            }
+        }
+}
+
 
 void SDL_Screen::events(){
     while (SDL_PollEvent(&e))
@@ -595,6 +740,7 @@ void SDL_Screen::events(){
                 if (e.window.event == SDL_WINDOWEVENT_RESIZED)
                     updateSize();
                 break;
+
             case SDL_QUIT:
                 program_running = false; // quit the program if the user closes the window
                 break;
@@ -748,5 +894,8 @@ void SDL_Screen::displayPortions(int cut_x, int cut_y, unsigned char red, unsign
         SDL_RenderDrawLine(r, i * (double)(_width - 1)/cut_x,  0, i*(double)(_width - 1)/cut_x, _height);//vertical lines
     for(int i = 0; i <= cut_y; i++)
         SDL_RenderDrawLine(r, 0, i * (double)(_height - 1)/cut_y,  (_width), i*(double)(_height - 1)/cut_y);//horizontal lines
+    SDL_SetRenderDrawColor(r, 255-red, 255-green, 255-blue, 255);
+    SDL_RenderDrawLine(r, 0, _height/2, _width, _height/2);//middle lines
+    SDL_RenderDrawLine(r, _width/2, 0, _width/2, _height);
     SDL_SetRenderDrawColor(r, _red, _green, _blue, _alpha);
 }

@@ -6,7 +6,7 @@ int main(int argc, char **argv){
     SDL_Screen s(1000, 1000, "SDL_Lab", 160);
     TTF_Font * f;
     s.setFont(&f, "Roboto-Medium.ttf", 30);
-
+    std::string buffer = "";
     while(s.isRunning()){
         
 
@@ -15,9 +15,9 @@ int main(int argc, char **argv){
 
         s.setColor(255, 0, 0, 255);
 
-        s.paragraph(200, 400, "hello world\nI'm antoine\na 19yo guy trying to display\n text on multiple\n lines\nusing ttf from SDL2", f);
-        s.displayPortions(5, 5);
-        s.refreshAndDetailsAndEvents();
+        s.paragraph(200, 400, buffer.c_str(), f);
+        s.events(&buffer);
+        s.refreshAndDetails();
     }
     
     TTF_CloseFont(f);
