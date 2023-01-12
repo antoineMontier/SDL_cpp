@@ -552,8 +552,8 @@ void SDL_Screen::filledRect(int x, int y, int width, int height, int rounding){
     if(rounding > fmin(width, height)/2.0)
         rounding = fmin(width, height)/2.0;
     //let's draw the core rectangles
-    filledRect(x, y + rounding, width, height-2*rounding);
-    filledRect(x + rounding, y, width-2*rounding, height);
+    filledRect(x, y + rounding, width + 1, height-2*rounding);
+    filledRect(x + rounding, y, width-2*rounding, height + 1);
 
     //draw the 4 corners
 
@@ -567,21 +567,41 @@ void SDL_Screen::filledRect(int x, int y, int width, int height, int rounding, u
     SDL_SetRenderDrawColor(r, red, green, blue, alpha);
     //first let's fix the rounding if it's bellow 0 or greater than the half of the smallest side of the rectangle
     if(rounding <= 0){
-        filledRect(x, y, width, height);
+        emptyRect(x, y, width, height);
         return;
     }
     if(rounding > fmin(width, height)/2.0)
         rounding = fmin(width, height)/2.0;
-    //let's draw the core rectangles
-    filledRect(x, y + rounding, width, height-2*rounding);
-    filledRect(x + rounding, y, width-2*rounding, height);
+    //draw the center
+    filledRect(x, y + rounding, width + 1, height-2*rounding);
+    filledRect(x + rounding, y, width - 2*rounding, rounding);
+    filledRect(x + rounding, y + height - rounding, width - 2*rounding, rounding);
 
-    //draw the 4 corners
+    //now draw the four corners
 
-    filledCircle(x +  rounding, y + rounding, rounding);//top left
-    filledCircle(x + width - rounding, y + rounding, rounding);//top right
-    filledCircle(x + rounding, y + height - rounding, rounding);//bottom left
-    filledCircle(x + width - rounding, y + height - rounding, rounding);//bottom right
+    //==== top left ====
+    for(int i = x ; i < x + rounding; i++)
+        for(int j = y; j < y + rounding; j++)
+            if(distance(x + rounding, y + rounding, i, j) <= rounding)
+                SDL_RenderDrawPoint(r, i, j);
+    
+    //==== top right ====
+    for(int i = x + width - rounding; i < x + width ; i++)
+        for(int j = y ; j < y + rounding ; j++)
+            if(distance(x + width - rounding, y + rounding, i, j) <= rounding) 
+                SDL_RenderDrawPoint(r, i, j);
+
+    //==== bottom left ====
+    for(int i = x ; i < x + rounding; i++)
+        for(int j = y + height - rounding ; j < y + height ; j++)
+            if(distance(x + rounding, y + height - rounding, i, j) <= rounding) 
+                SDL_RenderDrawPoint(r, i, j);
+
+    //==== bottom right ====
+    for(int i = x + width - rounding  ; i < x + width  ; i++)
+        for(int j = y + height - rounding  ; j < y + height  ; j++)
+            if(distance(x + width - rounding, y + height - rounding, i, j) <= rounding)
+                SDL_RenderDrawPoint(r, i, j);
     SDL_SetRenderDrawColor(r, _red, _green, _blue, _alpha);
 }
 
@@ -678,59 +698,6 @@ bool SDL_Screen::setFPS(double fps){
     return true;
 }
 
-void SDL_Screen::events(std::string * buff1){
-    static bool typing = true;
-    std::cout << typing << "\t";
-    while (SDL_PollEvent(&e))
-        { // reads all the events (mouse moving, key pressed...)        //possible to wait for an event with SDL_WaitEvent
-            switch (e.type)
-            {
-            case SDL_WINDOWEVENT:
-                if (e.window.event == SDL_WINDOWEVENT_RESIZED)
-                    updateSize();
-                break;
-            case SDL_TEXTINPUT:
-                (*buff1) += e.text.text;
-                break;
-
-            case SDL_QUIT:
-                program_running = false; // quit the program if the user closes the window
-                break;
-
-            case SDL_KEYDOWN: // SDL_KEYDOWN : hold a key            SDL_KEYUP : release a key
-                switch (e.key.keysym.sym){ // returns the key ('0' ; 'e' ; 'SPACE'...)
-
-                    case SDLK_RETURN:
-                        typing = !typing;
-                        break;
-
-                    case SDLK_BACKSPACE:
-                        if(buff1->length()>0)
-                            buff1->pop_back();
-                        break;
-
-                    case SDLK_ESCAPE:
-                        program_running = false; // escape the program if user presses esc
-                        break;
-
-                    default:
-                        break;
-                }
-
-            case SDL_KEYUP:
-                switch (e.key.keysym.sym){
-
-                    default:
-                        break;
-                }
-
-            default:
-                break;
-            }
-        }
-}
-
-
 void SDL_Screen::events(){
     while (SDL_PollEvent(&e))
         { // reads all the events (mouse moving, key pressed...)        //possible to wait for an event with SDL_WaitEvent
@@ -740,7 +707,6 @@ void SDL_Screen::events(){
                 if (e.window.event == SDL_WINDOWEVENT_RESIZED)
                     updateSize();
                 break;
-
             case SDL_QUIT:
                 program_running = false; // quit the program if the user closes the window
                 break;
@@ -792,6 +758,8 @@ bool SDL_Screen::setFont(TTF_Font **font, const char* font_file, int size)
 
 bool SDL_Screen::text(int x, int y, const char * text, TTF_Font *font){
 
+    if(text[0] == '\0')
+        return false;
     int text_width;
     int text_height;
     SDL_Surface *surface;
@@ -814,6 +782,9 @@ bool SDL_Screen::text(int x, int y, const char * text, TTF_Font *font){
 }
 
 bool SDL_Screen::text(int x, int y, const char *text, TTF_Font *font, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha){
+
+    if(text[0] == '\0')
+        return false;
     int text_width;
     int text_height;
     SDL_Surface *surface;
@@ -835,9 +806,34 @@ bool SDL_Screen::text(int x, int y, const char *text, TTF_Font *font, unsigned c
     return true;
 }
 
+/*
+bool SDL_Screen::text(int x, int y, std::string text, TTF_Font *font, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha){
+    int text_width;
+    int text_height;
+    SDL_Surface *surface;
+    SDL_Texture *texture;
+    SDL_Color textColor = {red, green, blue, alpha};
+
+    surface = TTF_RenderUTF8_Blended(font, text, textColor);
+    texture = SDL_CreateTextureFromSurface(r, surface);
+    text_width = surface->w;
+    text_height = surface->h;
+    SDL_FreeSurface(surface);
+    SDL_Rect rectangle;
+    rectangle.x = x;
+    rectangle.y = y;
+    rectangle.w = text_width;
+    rectangle.h = text_height;
+    SDL_RenderCopy(r, texture, NULL, &rectangle);
+    SDL_DestroyTexture(texture);
+    return true;
+}*/
+
 void SDL_Screen::paragraph(int x, int y, const char* text, TTF_Font* font, 
                         unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha){
 
+    if(text[0] == '\0')
+        return;
     SDL_Color text_color = {red, green, blue, alpha};
     // Split the text by newline characters
     std::stringstream textStream(text);
@@ -864,6 +860,8 @@ void SDL_Screen::paragraph(int x, int y, const char* text, TTF_Font* font,
 
 void SDL_Screen::paragraph(int x, int y, const char* text, TTF_Font* font){
 
+    if(text[0] == '\0')
+        return;
     SDL_Color text_color = {_red, _green, _blue, _alpha};
     // Split the text by newline characters
     std::stringstream textStream(text);
@@ -898,4 +896,16 @@ void SDL_Screen::displayPortions(int cut_x, int cut_y, unsigned char red, unsign
     SDL_RenderDrawLine(r, 0, _height/2, _width, _height/2);//middle lines
     SDL_RenderDrawLine(r, _width/2, 0, _width/2, _height);
     SDL_SetRenderDrawColor(r, _red, _green, _blue, _alpha);
+}
+
+std::string SDL_Screen::add_ENTER_every(int n, std::string str){
+    std::string result = "";
+    for(long unsigned int i=0; i < str.length(); i++){
+        if(i!= 0 && i % n == 0){
+            result += '\n';
+            result += str[i];
+        }else 
+            result += str[i];
+    }
+    return result;
 }

@@ -159,7 +159,6 @@ class SDL_Screen{
         void stopRunning();
 
         void events();
-        void events(std::string *buff);
 
         static bool rollover(int mx, int my, int x, int y, int w, int h);
 
@@ -168,6 +167,7 @@ class SDL_Screen{
 
         bool text(int x, int y, const char * text, TTF_Font *font);
         bool text(int x, int y, const char * text, TTF_Font *font, unsigned char red, unsigned char green, unsigned char blue, unsigned char alpha=255);
+        //bool text(int x, int y, std::string text, TTF_Font *font, unsigned char red=255, unsigned char green=255, unsigned char blue=255, unsigned char alpha=255){
 
         void paragraph(int x, int y, const char* text, TTF_Font* font, 
                     unsigned char red, unsigned char green=255, unsigned char blue=255, unsigned char alpha=255);
@@ -175,6 +175,8 @@ class SDL_Screen{
         void paragraph(int x, int y, const char* text, TTF_Font* font);
 
         void displayPortions(int cut_x, int cut_y, unsigned char red=255, unsigned char green=0, unsigned char blue=0);
+
+        std::string add_ENTER_every(int n, std::string str);
 };
 
 #endif
